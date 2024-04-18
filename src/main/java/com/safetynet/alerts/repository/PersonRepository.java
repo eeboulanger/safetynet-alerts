@@ -7,13 +7,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class PersonRepository implements DataRepository<Person> {
 
     @Override
     public Optional<List<Person>> findAll() {
-        return JsonDataReader.findAll("persons", new TypeReference<List<Person>>() {
+        return JsonDataReader.findAll("persons", new TypeReference<>() {
         });
     }
 
@@ -30,5 +31,13 @@ public class PersonRepository implements DataRepository<Person> {
     @Override
     public void update(Person entity) {
 
+    }
+
+    public Optional<List<Person>> findByAddress(String address) {
+
+        Optional<List<Person>> optionalList = this.findAll();
+        return optionalList.map(persons -> persons.stream()
+                .filter(f -> f.getAddress().equals(address))
+                .collect(Collectors.toList()));
     }
 }

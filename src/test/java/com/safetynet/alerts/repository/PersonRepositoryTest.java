@@ -31,4 +31,17 @@ public class PersonRepositoryTest {
         assertEquals("jaboyd@email.com", persons.get(0).getEmail());
 
     }
+
+    @Test
+    public void findPersonsByAddressTest() {
+
+        Optional<List<Person>> optional = repository.findByAddress("1509 Culver St");
+        List<Person> persons = new ArrayList<>();
+        if (optional.isPresent()) {
+            persons = optional.get();
+        }
+
+        assertFalse(persons.isEmpty());
+        assertEquals(5, persons.size());
+    }
 }
