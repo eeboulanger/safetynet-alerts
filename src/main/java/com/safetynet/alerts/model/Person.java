@@ -13,6 +13,8 @@ public class Person {
     private String phone;
     private String email;
 
+    public Person(){}
+
     public Person(String firstName, String lastName, String address, String city, int zip, String phone, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
