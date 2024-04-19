@@ -12,11 +12,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class JsonDataReaderTest {
+public class JsonDataReaderFromFileTest {
+
+    JsonDataReaderFromFile reader = new JsonDataReaderFromFile();
 
     @Test
     public void getAllPersonsFromJsonTest() {
-        Optional<List<Person>> optionalList = JsonDataReader.findAll("persons", new TypeReference<List<Person>>() {
+        Optional<List<Person>> optionalList = reader.findAll("persons", new TypeReference<>() {
         });
         List<Person> list = new ArrayList<>();
         if (optionalList.isPresent()) {
@@ -28,7 +30,7 @@ public class JsonDataReaderTest {
 
     @Test
     public void getAllFirestationsFromJsonTest() {
-        Optional<List<FireStation>> optionalList = JsonDataReader.findAll("firestations", new TypeReference<List<FireStation>>() {
+        Optional<List<FireStation>> optionalList = reader.findAll("firestations", new TypeReference<>() {
         });
         List<FireStation> list = new ArrayList<>();
         if (optionalList.isPresent()) {
@@ -41,7 +43,7 @@ public class JsonDataReaderTest {
 
     @Test
     public void getAllMedicalRecordsFromJsonTest() {
-        Optional<List<MedicalRecord>> optionalList = JsonDataReader.findAll("medicalrecords", new TypeReference<List<MedicalRecord>>() {
+        Optional<List<MedicalRecord>> optionalList = reader.findAll("medicalrecords", new TypeReference<>() {
         });
         List<MedicalRecord> list = new ArrayList<>();
         if (optionalList.isPresent()) {
@@ -55,7 +57,7 @@ public class JsonDataReaderTest {
 
     @Test
     public void noObjectsInJsonReturnsEmpty() {
-        Optional<List<MedicalRecord>> optionalList = JsonDataReader.findAll("medical", new TypeReference<List<MedicalRecord>>() {
+        Optional<List<MedicalRecord>> optionalList = reader.findAll("medical", new TypeReference<>() {
         });
 
         assertTrue(optionalList.isEmpty());

@@ -2,7 +2,8 @@ package com.safetynet.alerts.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.util.JsonDataReader;
+import com.safetynet.alerts.util.IJsonDataReader;
+import com.safetynet.alerts.util.JsonDataReaderFromFile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,9 +13,11 @@ import java.util.stream.Collectors;
 @Repository
 public class PersonRepository implements DataRepository<Person> {
 
+    IJsonDataReader reader = new JsonDataReaderFromFile();
+
     @Override
     public Optional<List<Person>> findAll() {
-        return JsonDataReader.findAll("persons", new TypeReference<>() {
+        return reader.findAll("persons", new TypeReference<>() {
         });
     }
 
