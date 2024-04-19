@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MedicalRecordRepositoryTest {
 
@@ -27,5 +26,18 @@ public class MedicalRecordRepositoryTest {
         assertEquals("03/06/1984", records.get(0).getBirthdate());
         assertEquals("aznol:350mg", records.get(0).getMedications().get(0));
         assertEquals("nillacilan", records.get(0).getAllergies().get(0));
+    }
+
+    @Test
+    public void findByNameTest(){
+        Optional<MedicalRecord> optional = repository.findByName("Shawna", "Stelzer");
+        MedicalRecord record = null;
+        if(optional.isPresent()) {
+             record = optional.get();
+        }
+
+        assertNotNull(record);
+        assertEquals("Shawna", record.getFirstName());
+        assertEquals("07/08/1980", record.getBirthdate());
     }
 }
