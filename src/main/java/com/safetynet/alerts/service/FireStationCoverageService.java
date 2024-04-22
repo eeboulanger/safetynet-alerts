@@ -1,5 +1,7 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.FireStationCoverage;
+import com.safetynet.alerts.dto.PersonInfo;
 import com.safetynet.alerts.model.*;
 import com.safetynet.alerts.repository.FireStationRepository;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
@@ -15,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class EmergencyService implements IEmergencyService {
+public class FireStationCoverageService implements IFireStationCoverageService<FireStationCoverage> {
 
     @Autowired
     PersonRepository personRepository;
@@ -27,7 +29,7 @@ public class EmergencyService implements IEmergencyService {
 
 
     public FireStationCoverage findPersonsCoveredByFireStation(int stationNumber) {
-        List<Person> persons = findAllPersonsCoveredByStation(stationNumber);
+        List<Person> persons = findAllPersons(stationNumber);
         List<MedicalRecord> records = getRecordsForAllPersonsInList(persons);
         Map<String, Integer> count = countAdultsAndChildren(records);
 
@@ -40,7 +42,7 @@ public class EmergencyService implements IEmergencyService {
      * @param number is the fire station number
      * @return a list of persons
      */
-    public List<Person> findAllPersonsCoveredByStation(int number) {
+    public List<Person> findAllPersons(int number) {
         Optional<List<FireStation>> optionalFireStations = fireStationRepository.findByStationNumber(number);
 
         Set<String> addresses = new HashSet<>();
@@ -57,6 +59,12 @@ public class EmergencyService implements IEmergencyService {
                 .flatMap(optionalList -> optionalList.get().stream())
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Converts person list to list of personinfo objects
+     * @param personList
+     * @return list of person info objects - firstname, lastname, address, phonenumber
+     */
 
     public List<PersonInfo> getPersonInfoList(List<Person> personList) {
         return personList.stream()

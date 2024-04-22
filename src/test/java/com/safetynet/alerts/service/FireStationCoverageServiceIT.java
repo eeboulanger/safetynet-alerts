@@ -1,6 +1,6 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.model.FireStationCoverage;
+import com.safetynet.alerts.dto.FireStationCoverage;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +17,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class EmergencyServiceIT {
+public class FireStationCoverageServiceIT {
 
     @Autowired
-    EmergencyService service;
+    FireStationCoverageService service;
 
     @Nested
     class ListTests {
@@ -29,11 +29,11 @@ public class EmergencyServiceIT {
 
         @BeforeEach
         public void setUp() {
-            personList = service.findAllPersonsCoveredByStation(1);
+            personList = service.findAllPersons(1);
         }
 
         @Test
-        public void getPersonsCoveredByFireStationTest() {
+        public void findAllPersonsCoveredByFireStationTest() {
             assertEquals(6, personList.size());
         }
 
