@@ -59,4 +59,16 @@ public class EmergencyControllerIT {
                 .andExpect(jsonPath("$.[*]firstName", hasItem("Tenley")))
                 .andExpect(jsonPath("$.[0]familyMemberList.size()").value(4));
     }
+
+    @Test
+    @DisplayName("Given there are households covered, when searching by firestation number, then return list of unique phone numbers")
+    public void givenCoveredHouseholds_whenEnteringStationNumber_thenReturnListOfPhoneNumbers() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/phoneAlert?firestation={station_number}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(4))
+                .andExpect(jsonPath("$.[*]", hasItems("841-874-6512", "841-874-7462", "841-874-8547", "841-874-7784")));
+    }
 }
