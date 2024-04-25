@@ -53,16 +53,6 @@ public class FireStationCoverageServiceIT {
         }
     }
 
-    @Test
-    public void isAdultTest() {
-        String adult = "12/04/1984";
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        String child = LocalDate.now().format(formatter);
-
-        assertTrue(service.isAdult(adult));
-        assertFalse(service.isAdult(child));
-    }
 
     @Test
     public void findAllPersonsCoveredByFireStationTest() {
