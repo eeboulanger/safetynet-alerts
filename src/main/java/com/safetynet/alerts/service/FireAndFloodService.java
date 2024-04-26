@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 
 @Service
-public class FireService implements IFireService {
+public class FireAndFloodService implements IFireAndFloodService {
 
     @Autowired
     private PersonRepository personRepository;
@@ -27,6 +27,7 @@ public class FireService implements IFireService {
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
+    @Override
     public List<FloodInfo> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {
 
         List<FloodInfo> floodInfoList = new ArrayList<>();

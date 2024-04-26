@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FireServiceIT {
 
     @Autowired
-    private FireService fireService;
+    private FireAndFloodService fireService;
 
     @Test
     @DisplayName("Given there are persons covered when entering address then return list of persons and fire station number")

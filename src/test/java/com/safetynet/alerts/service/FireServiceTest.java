@@ -29,7 +29,7 @@ public class FireServiceTest {
     @Mock
     private MedicalRecordRepository medicalRecordRepository;
     @InjectMocks
-    private FireService fireService;
+    private FireAndFloodService fireService;
 
     @Test
     public void findAllPersonsAtAddressTest() {
