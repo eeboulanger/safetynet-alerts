@@ -84,7 +84,7 @@ public class FireServiceTest {
     public void findFireStationTest() {
 
         FireStation fireStation = new FireStation("1509 Culver St", 1);
-        when(fireStationRepository.findByStationByAddress("1509 Culver St")).thenReturn(Optional.of(fireStation));
+        when(fireStationRepository.findStationByAddress("1509 Culver St")).thenReturn(Optional.of(fireStation));
 
         int result = fireService.findFireStation("1509 Culver St");
 

@@ -99,4 +99,36 @@ public class EmergencyControllerIT {
                 .andExpect(jsonPath("$.firestation").value(0))
                 .andExpect(jsonPath("$.persons.length()").value(0));
     }
+
+    @Test
+    @DisplayName("Given there are persons covered, when searching by list of stations, then return station number address and list of persons with medical information")
+    public void givenCoveredPersons_whenEnteringLisOfStations_thenReturnList() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/flood/stations?stations={listOfFireStationNumbers}", "1,2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andExpect(jsonPath("$[*].firestationNumber", hasItems(1, 2)))
+                .andExpect(jsonPath("$[*].address", hasItems(
+                        "908 73rd St",
+                        "947 E. Rose Dr",
+                        "644 Gershwin Cir",
+                        "951 LoneTree Rd",
+                        "892 Downing Ct",
+                        "29 15th St"
+                )))
+                .andExpect(jsonPath("$[*].medicalInfoList.length()", containsInAnyOrder(2, 3, 1, 1, 3, 1))); //assert number of persons per address
+    }
+
+    @Test
+    @DisplayName("Given there are no persons covered, when searching by station numbers, then return empty list")
+    public void givenNoCoveredPersons_whenEnteringStationNumbers_thenReturnEmptyList() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/flood/stations?stations={listOfFireStationNumbers}", -1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 }

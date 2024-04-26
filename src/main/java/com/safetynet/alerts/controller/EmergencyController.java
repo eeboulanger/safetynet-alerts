@@ -2,6 +2,7 @@ package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.dto.FireInfo;
 import com.safetynet.alerts.dto.FireStationCoverage;
+import com.safetynet.alerts.dto.FloodInfo;
 import com.safetynet.alerts.service.IChildAlertService;
 import com.safetynet.alerts.service.IFireService;
 import com.safetynet.alerts.service.IFireStationCoverageService;
@@ -22,7 +23,7 @@ public class EmergencyController {
     private final IFireService fireService;
 
     @Autowired
-    public EmergencyController(IFireStationCoverageService<?> coverageService, IChildAlertService<?> childAlertService, IPhoneAlertService phoneAlertService, IFireService<?> fireService) {
+    public EmergencyController(IFireStationCoverageService<?> coverageService, IChildAlertService<?> childAlertService, IPhoneAlertService phoneAlertService, IFireService fireService) {
         this.coverageService = coverageService;
         this.childAlertService = childAlertService;
         this.phoneAlertService = phoneAlertService;
@@ -49,8 +50,14 @@ public class EmergencyController {
 
     @GetMapping("/fire")
     public ResponseEntity<?> getListOfPersonsAndFireStationNumber(@RequestParam("address") String address) {
-        FireInfo fireInfo = (FireInfo) fireService.findPersonsAndFireStation(address);
+        FireInfo fireInfo = fireService.findPersonsAndFireStation(address);
         return ResponseEntity.ok(fireInfo);
+    }
+
+    @GetMapping("/flood/stations")
+    public ResponseEntity<?> findAllHouseHoldsCoveredByStations(@RequestParam("stations") List<Integer> listOfFireStations) {
+        List<FloodInfo> floodInfoList = fireService.findAllHouseHoldsCoveredByStations(listOfFireStations);
+        return ResponseEntity.ok(floodInfoList);
     }
 
 }

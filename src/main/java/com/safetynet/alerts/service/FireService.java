@@ -1,6 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.FireInfo;
+import com.safetynet.alerts.dto.FloodInfo;
 import com.safetynet.alerts.dto.PersonMedicalInfo;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.MedicalRecord;
@@ -11,15 +12,13 @@ import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 
 @Service
-public class FireService implements IFireService<FireInfo> {
+public class FireService implements IFireService {
 
     @Autowired
     private PersonRepository personRepository;
@@ -27,6 +26,35 @@ public class FireService implements IFireService<FireInfo> {
     private FireStationRepository fireStationRepository;
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
+
+    public List<FloodInfo> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {
+
+        List<FloodInfo> floodInfoList = new ArrayList<>();
+
+        for (int stationNumber : fireStationNumbers) {
+            Optional<List<FireStation>> optional = fireStationRepository.findByStationNumber(stationNumber);
+
+            //A fire station can have multiple addresses so get all of them
+            if (optional.isPresent()) {
+
+                Set<String> addresses = optional.get().stream()
+                        .map(FireStation::getAddress)
+                        .collect(Collectors.toSet());
+
+                //For each address get persons covered
+                for (String address : addresses) {
+                    List<Person> personList = findAllPersonsAtAddress(address);
+                    List<MedicalRecord> recordList = findMedicalRecord(personList);
+                    List<PersonMedicalInfo> medicalInfoList = convertToRecordInfoList(personList, recordList);
+
+                    FloodInfo floodInfo = new FloodInfo(stationNumber, address, medicalInfoList);
+                    floodInfoList.add(floodInfo);
+                }
+            }
+        }
+        return floodInfoList;
+    }
+
 
     @Override
     public FireInfo findPersonsAndFireStation(String address) {
@@ -98,7 +126,7 @@ public class FireService implements IFireService<FireInfo> {
      * @return number
      */
     public int findFireStation(String address) {
-        return fireStationRepository.findByStationByAddress(address)
+        return fireStationRepository.findStationByAddress(address)
                 .map(FireStation::getStation)
                 .orElse(0);
     }

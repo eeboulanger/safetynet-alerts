@@ -44,7 +44,7 @@ public class FireStationRepository implements DataRepository<FireStation> {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<FireStation> findByStationByAddress(String address) {
+    public Optional<FireStation> findStationByAddress(String address) {
         return this.findAll()
                 .flatMap(fireStations -> fireStations.stream()
                         .filter(fireStation -> fireStation.getAddress().equals(address))

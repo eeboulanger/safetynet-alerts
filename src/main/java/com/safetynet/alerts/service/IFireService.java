@@ -1,11 +1,15 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.FireInfo;
+import com.safetynet.alerts.dto.FloodInfo;
+import com.safetynet.alerts.dto.PersonMedicalInfo;
+
+import java.util.List;
 
 /**
  * Finds all covered persons and fire station by address
  */
-public interface IFireService<T> {
+public interface IFireService {
 
     /**
      * Finds persons and firestation and converts to DTO
@@ -13,5 +17,6 @@ public interface IFireService<T> {
      * @param address used for searching
      * @return a DTO with the information
      */
-    T findPersonsAndFireStation(String address);
+    FireInfo findPersonsAndFireStation(String address);
+    List<FloodInfo> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers);
 }

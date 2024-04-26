@@ -39,7 +39,7 @@ public class FireStationRepositoryTest {
 
     @Test
     public void findByStationByAddressTest() {
-        Optional<FireStation> optional = repository.findByStationByAddress("947 E. Rose Dr");
+        Optional<FireStation> optional = repository.findStationByAddress("947 E. Rose Dr");
         FireStation result = optional.orElse(new FireStation());
 
         assertEquals(1, result.getStation());

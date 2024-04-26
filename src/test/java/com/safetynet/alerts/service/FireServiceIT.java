@@ -1,6 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.FireInfo;
+import com.safetynet.alerts.dto.FloodInfo;
 import com.safetynet.alerts.dto.PersonMedicalInfo;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
@@ -38,6 +39,17 @@ public class FireServiceIT {
 
         assertEquals(3, result.getPersons().size());
         assertTrue(result.getPersons().containsAll(persons));
+    }
+
+    @Test
+    @DisplayName("Find persons covered by stations should return list of fire staiton numbers, address and list of medical information of persons covered ")
+    public void findAllHouseHoldsCoveredByStations(){
+        List<Integer> stations = List.of(1,2);
+
+        List<FloodInfo> result = fireService.findAllHouseHoldsCoveredByStations(stations);
+
+        assertNotNull(result);
+        assertEquals(6, result.size());
     }
 
     @Test
