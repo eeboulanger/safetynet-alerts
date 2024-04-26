@@ -36,4 +36,12 @@ public class FireStationRepositoryTest {
         assertFalse(stations.isEmpty());
         assertEquals(5, stations.size());
     }
+
+    @Test
+    public void findByStationByAddressTest() {
+        Optional<FireStation> optional = repository.findByStationByAddress("947 E. Rose Dr");
+        FireStation result = optional.orElse(new FireStation());
+
+        assertEquals(1, result.getStation());
+    }
 }

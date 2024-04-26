@@ -20,7 +20,7 @@ public class EmergencyControllerIT {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("Given there's a firestation when entering number then return list of personinfo and count adults/children")
+    @DisplayName("Given there's a firestation when entering number then return list of persons and count adults/children")
     public void givenFireStation_whenEnteringNumber_thenReturnList() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/firestation?stationNumber={station_number}", 1)
@@ -70,5 +70,33 @@ public class EmergencyControllerIT {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.length()").value(4))
                 .andExpect(jsonPath("$.[*]", hasItems("841-874-6512", "841-874-7462", "841-874-8547", "841-874-7784")));
+    }
+
+    @Test
+    @DisplayName("Given there are persons covered, when searching by address, then return list of persons and fire station number")
+    public void givenCoveredHouseholds_whenEnteringAddress_thenReturnListOfPersonsAndFireStationNumber() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/fire?address={address}", "951 LoneTree Rd")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.firestation").value(2))
+                .andExpect(jsonPath("$.persons.length()").value(1))
+                .andExpect(jsonPath("$.persons[*].firstName", hasItem("Eric")))
+                .andExpect(jsonPath("$.persons[*].lastName", hasItem("Cadigan")))
+                .andExpect(jsonPath("$.persons[*].allergies.length()").value(0))
+                .andExpect(jsonPath("$.persons[0].medications[*]", hasItem("tradoxidine:400mg")));
+    }
+
+    @Test
+    @DisplayName("Given there are no persons covered, when searching by address, then return empty list")
+    public void givenNoCoveredPersons_whenEnteringAddress_thenReturnEmptyList() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/fire?address={address}", "address not covered")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.firestation").value(0))
+                .andExpect(jsonPath("$.persons.length()").value(0));
     }
 }

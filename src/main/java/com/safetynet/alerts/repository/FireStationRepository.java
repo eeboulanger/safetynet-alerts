@@ -43,4 +43,12 @@ public class FireStationRepository implements DataRepository<FireStation> {
                 .filter(f -> f.getStation() == number)
                 .collect(Collectors.toList()));
     }
+
+    public Optional<FireStation> findByStationByAddress(String address) {
+        return this.findAll()
+                .flatMap(fireStations -> fireStations.stream()
+                        .filter(fireStation -> fireStation.getAddress().equals(address))
+                        .findFirst()
+                );
+    }
 }

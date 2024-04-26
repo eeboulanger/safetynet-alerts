@@ -1,7 +1,9 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.dto.FireInfo;
 import com.safetynet.alerts.dto.FireStationCoverage;
 import com.safetynet.alerts.service.IChildAlertService;
+import com.safetynet.alerts.service.IFireService;
 import com.safetynet.alerts.service.IFireStationCoverageService;
 import com.safetynet.alerts.service.IPhoneAlertService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +17,16 @@ import java.util.Set;
 public class EmergencyController {
 
     private final IFireStationCoverageService<?> coverageService;
-
     private final IChildAlertService<?> childAlertService;
     private final IPhoneAlertService phoneAlertService;
+    private final IFireService fireService;
 
     @Autowired
-    public EmergencyController(IFireStationCoverageService<?> coverageService, IChildAlertService<?> childAlertService, IPhoneAlertService phoneAlertService) {
+    public EmergencyController(IFireStationCoverageService<?> coverageService, IChildAlertService<?> childAlertService, IPhoneAlertService phoneAlertService, IFireService<?> fireService) {
         this.coverageService = coverageService;
         this.childAlertService = childAlertService;
         this.phoneAlertService = phoneAlertService;
+        this.fireService = fireService;
     }
 
     @GetMapping("/firestation")
@@ -42,6 +45,12 @@ public class EmergencyController {
     public ResponseEntity<?> getListOfPhoneNumbers(@RequestParam("firestation") int station_number) {
         Set<String> phoneNumbers = phoneAlertService.findPhoneNumbersByFireStation(station_number);
         return ResponseEntity.ok(phoneNumbers);
+    }
+
+    @GetMapping("/fire")
+    public ResponseEntity<?> getListOfPersonsAndFireStationNumber(@RequestParam("address") String address) {
+        FireInfo fireInfo = (FireInfo) fireService.findPersonsAndFireStation(address);
+        return ResponseEntity.ok(fireInfo);
     }
 
 }
