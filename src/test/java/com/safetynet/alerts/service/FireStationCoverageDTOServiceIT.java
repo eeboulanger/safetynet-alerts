@@ -1,6 +1,6 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.FireStationCoverage;
+import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,15 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class FireStationCoverageServiceIT {
+public class FireStationCoverageDTOServiceIT {
 
     @Autowired
     FireStationCoverageService service;
@@ -56,7 +54,7 @@ public class FireStationCoverageServiceIT {
 
     @Test
     public void findAllPersonsCoveredByFireStationTest() {
-        FireStationCoverage coverage = service.findPersonsCoveredByFireStation(1);
+        FireStationCoverageDTO coverage = service.findPersonsCoveredByFireStation(1);
 
         assertNotNull(coverage);
         assertEquals(6, coverage.getPersonList().size());

@@ -1,6 +1,6 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.ChildInfo;
+import com.safetynet.alerts.dto.ChildDTO;
 import com.safetynet.alerts.dto.PersonInfo;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ChildInfoAlertServiceTest {
+public class ChildDTOAlertServiceTest {
 
     @Mock
     private PersonRepository personRepository;
@@ -40,7 +40,7 @@ public class ChildInfoAlertServiceTest {
         when(personRepository.findByAddress(address)).thenReturn(Optional.of(List.of(person)));
         when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
-        List<ChildInfo> result = service.findAllChildren(address);
+        List<ChildDTO> result = service.findAllChildren(address);
 
         verify(personRepository, times(2)).findByAddress(address);
         verify(medicalRecordRepository).findByName("John", "Boyd");
@@ -54,7 +54,7 @@ public class ChildInfoAlertServiceTest {
 
         when(personRepository.findByAddress(address)).thenReturn(Optional.empty());
 
-        List<ChildInfo> result = service.findAllChildren(address);
+        List<ChildDTO> result = service.findAllChildren(address);
 
         verify(personRepository, times(1)).findByAddress(address);
         assertEquals(0, result.size());
@@ -71,7 +71,7 @@ public class ChildInfoAlertServiceTest {
         when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
 
-        List<ChildInfo> result = service.findAllChildren(address);
+        List<ChildDTO> result = service.findAllChildren(address);
 
         verify(personRepository, times(1)).findByAddress(address);
         assertEquals(0, result.size());

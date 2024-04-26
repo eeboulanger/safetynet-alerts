@@ -1,6 +1,6 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.FireStationCoverage;
+import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.dto.PersonInfo;
 import com.safetynet.alerts.model.*;
 import com.safetynet.alerts.repository.FireStationRepository;
@@ -18,7 +18,7 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 
 @Service
 @Primary
-public class FireStationCoverageService implements IFireStationCoverageService<FireStationCoverage> {
+public class FireStationCoverageService implements IFireStationCoverageService<FireStationCoverageDTO> {
 
     @Autowired
     PersonRepository personRepository;
@@ -28,12 +28,12 @@ public class FireStationCoverageService implements IFireStationCoverageService<F
     MedicalRecordRepository medicalRecordRepository;
 
 
-    public FireStationCoverage findPersonsCoveredByFireStation(int stationNumber) {
+    public FireStationCoverageDTO findPersonsCoveredByFireStation(int stationNumber) {
         List<Person> persons = findAllPersons(stationNumber);
         List<MedicalRecord> records = getRecordsForAllPersonsInList(persons);
         Map<String, Integer> count = countAdultsAndChildren(records);
 
-        return new FireStationCoverage(getPersonInfoList(persons), count);
+        return new FireStationCoverageDTO(getPersonInfoList(persons), count);
     }
 
     /**

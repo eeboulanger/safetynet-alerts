@@ -1,6 +1,6 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.ChildInfo;
+import com.safetynet.alerts.dto.ChildDTO;
 import com.safetynet.alerts.dto.PersonInfo;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import com.safetynet.alerts.repository.PersonRepository;
@@ -20,7 +20,7 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
  */
 @Service
 @Primary
-public class ChildAlertService implements IChildAlertService<ChildInfo> {
+public class ChildAlertService implements IChildAlertService<ChildDTO> {
 
     @Autowired
     private MedicalRecordRepository recordRepository;
@@ -28,13 +28,13 @@ public class ChildAlertService implements IChildAlertService<ChildInfo> {
     private PersonRepository personRepository;
 
     @Override
-    public List<ChildInfo> findAllChildren(String address) {
+    public List<ChildDTO> findAllChildren(String address) {
 
         return personRepository.findByAddress(address).stream()
                 .flatMap(Collection::stream)
                 .flatMap(person -> recordRepository.findByName(person.getFirstName(), person.getLastName()).stream())
                 .filter(record -> calculateAge(record.getBirthdate(), "MM/dd/yyyy") <= 18)
-                .map(record -> new ChildInfo(
+                .map(record -> new ChildDTO(
                                 record.getFirstName(),
                                 record.getLastName(),
                                 calculateAge(record.getBirthdate(), "MM/dd/yyyy"),

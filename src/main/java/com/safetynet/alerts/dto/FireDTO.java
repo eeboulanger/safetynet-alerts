@@ -5,12 +5,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class FireInfo {
+public class FireDTO {
 
     private List<PersonMedicalInfo> persons;
     private int firestation;
 
-    public FireInfo(List<PersonMedicalInfo> persons, int firestation) {
+    public FireDTO(List<PersonMedicalInfo> persons, int firestation) {
         this.persons = persons;
         this.firestation = firestation;
     }

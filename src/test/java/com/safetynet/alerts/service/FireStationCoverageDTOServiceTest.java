@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.FireStation;
-import com.safetynet.alerts.dto.FireStationCoverage;
+import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.repository.FireStationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class FireStationCoverageServiceTest {
+public class FireStationCoverageDTOServiceTest {
 
     @Mock
     FireStationRepository fireStationRepository;
@@ -32,7 +32,7 @@ public class FireStationCoverageServiceTest {
     public void getListOfPersonsCoveredByStation() {
         when(fireStationRepository.findByStationNumber(1)).thenReturn(mockedStations);
 
-        FireStationCoverage coverage = service.findPersonsCoveredByFireStation(1);
+        FireStationCoverageDTO coverage = service.findPersonsCoveredByFireStation(1);
 
         verify(fireStationRepository).findByStationNumber(1);
         assertNotNull(coverage);

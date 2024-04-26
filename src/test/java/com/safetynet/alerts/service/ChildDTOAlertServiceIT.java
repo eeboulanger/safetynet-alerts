@@ -1,6 +1,6 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.ChildInfo;
+import com.safetynet.alerts.dto.ChildDTO;
 import com.safetynet.alerts.dto.PersonInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class ChildInfoAlertServiceIT {
+public class ChildDTOAlertServiceIT {
 
     @Autowired
     ChildAlertService service;
@@ -21,20 +21,20 @@ public class ChildInfoAlertServiceIT {
     @DisplayName("Given there are children when entering address, then return list")
     public void findAllChildrenTest() {
 
-        List<ChildInfo> childInfoList = service.findAllChildren("1509 Culver St");
+        List<ChildDTO> childDTOList = service.findAllChildren("1509 Culver St");
 
-        assertNotNull(childInfoList);
-        assertEquals(2, childInfoList.size());
-        assertEquals(4, childInfoList.get(0).getFamilyMemberList().size());
+        assertNotNull(childDTOList);
+        assertEquals(2, childDTOList.size());
+        assertEquals(4, childDTOList.get(0).getFamilyMemberList().size());
     }
 
     @Test
     @DisplayName("Given there's no child when entering address, then return empty list")
     public void givenNoChild_whenEnteringAddress_thenReturnEmptyJson() {
-        List<ChildInfo> childInfoList = service.findAllChildren("29 15th St");
+        List<ChildDTO> childDTOList = service.findAllChildren("29 15th St");
 
-        assertNotNull(childInfoList);
-        assertEquals(0, childInfoList.size());
+        assertNotNull(childDTOList);
+        assertEquals(0, childDTOList.size());
     }
 
     @Test

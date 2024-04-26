@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.FireInfo;
-import com.safetynet.alerts.dto.FloodInfo;
+import com.safetynet.alerts.dto.FireDTO;
+import com.safetynet.alerts.dto.FloodDTO;
 import com.safetynet.alerts.dto.PersonMedicalInfo;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.MedicalRecord;
@@ -28,9 +28,9 @@ public class FireAndFloodService implements IFireAndFloodService {
     private MedicalRecordRepository medicalRecordRepository;
 
     @Override
-    public List<FloodInfo> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {
+    public List<FloodDTO> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {
 
-        List<FloodInfo> floodInfoList = new ArrayList<>();
+        List<FloodDTO> floodDTOList = new ArrayList<>();
 
         for (int stationNumber : fireStationNumbers) {
             Optional<List<FireStation>> optional = fireStationRepository.findByStationNumber(stationNumber);
@@ -48,17 +48,17 @@ public class FireAndFloodService implements IFireAndFloodService {
                     List<MedicalRecord> recordList = findMedicalRecord(personList);
                     List<PersonMedicalInfo> medicalInfoList = convertToRecordInfoList(personList, recordList);
 
-                    FloodInfo floodInfo = new FloodInfo(stationNumber, address, medicalInfoList);
-                    floodInfoList.add(floodInfo);
+                    FloodDTO floodDTO = new FloodDTO(stationNumber, address, medicalInfoList);
+                    floodDTOList.add(floodDTO);
                 }
             }
         }
-        return floodInfoList;
+        return floodDTOList;
     }
 
 
     @Override
-    public FireInfo findPersonsAndFireStation(String address) {
+    public FireDTO findPersonsAndFireStation(String address) {
 
         List<Person> persons = findAllPersonsAtAddress(address);
         List<MedicalRecord> records = findMedicalRecord(persons);
@@ -66,7 +66,7 @@ public class FireAndFloodService implements IFireAndFloodService {
 
         int fireStationNumber = findFireStation(address);
 
-        return new FireInfo(personMedicalInfoList, fireStationNumber);
+        return new FireDTO(personMedicalInfoList, fireStationNumber);
     }
 
     /**

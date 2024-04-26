@@ -1,8 +1,8 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.FireInfo;
-import com.safetynet.alerts.dto.FireStationCoverage;
-import com.safetynet.alerts.dto.FloodInfo;
+import com.safetynet.alerts.dto.FireDTO;
+import com.safetynet.alerts.dto.FireStationCoverageDTO;
+import com.safetynet.alerts.dto.FloodDTO;
 import com.safetynet.alerts.service.IChildAlertService;
 import com.safetynet.alerts.service.IFireAndFloodService;
 import com.safetynet.alerts.service.IFireStationCoverageService;
@@ -32,7 +32,7 @@ public class EmergencyController {
 
     @GetMapping("/firestation")
     public ResponseEntity<?> getFireStationCoverage(@RequestParam("stationNumber") int stationNumber) {
-        FireStationCoverage coverage = (FireStationCoverage) coverageService.findPersonsCoveredByFireStation(stationNumber);
+        FireStationCoverageDTO coverage = (FireStationCoverageDTO) coverageService.findPersonsCoveredByFireStation(stationNumber);
         return ResponseEntity.ok(coverage);
     }
 
@@ -50,14 +50,14 @@ public class EmergencyController {
 
     @GetMapping("/fire")
     public ResponseEntity<?> getListOfPersonsAndFireStationNumber(@RequestParam("address") String address) {
-        FireInfo fireInfo = fireAndFloodService.findPersonsAndFireStation(address);
-        return ResponseEntity.ok(fireInfo);
+        FireDTO fireDTO = fireAndFloodService.findPersonsAndFireStation(address);
+        return ResponseEntity.ok(fireDTO);
     }
 
     @GetMapping("/flood/stations")
     public ResponseEntity<?> findAllHouseHoldsCoveredByStations(@RequestParam("stations") List<Integer> listOfFireStations) {
-        List<FloodInfo> floodInfoList = fireAndFloodService.findAllHouseHoldsCoveredByStations(listOfFireStations);
-        return ResponseEntity.ok(floodInfoList);
+        List<FloodDTO> floodDTOList = fireAndFloodService.findAllHouseHoldsCoveredByStations(listOfFireStations);
+        return ResponseEntity.ok(floodDTOList);
     }
 
 }

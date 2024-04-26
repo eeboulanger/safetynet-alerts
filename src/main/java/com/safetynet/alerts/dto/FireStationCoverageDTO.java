@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class FireStationCoverage {
+public class FireStationCoverageDTO {
 
     List<PersonInfo> personList;
     Map<String, Integer> count;
 
-    public FireStationCoverage(List<PersonInfo> personList, Map<String, Integer> count) {
+    public FireStationCoverageDTO(List<PersonInfo> personList, Map<String, Integer> count) {
         this.personList = personList;
         this.count = count;
     }

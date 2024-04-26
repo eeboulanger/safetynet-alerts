@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.FireInfo;
-import com.safetynet.alerts.dto.FloodInfo;
+import com.safetynet.alerts.dto.FireDTO;
+import com.safetynet.alerts.dto.FloodDTO;
 import com.safetynet.alerts.dto.PersonMedicalInfo;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
@@ -32,7 +32,7 @@ public class FireServiceIT {
                         List.of("peanut", "shellfish", "aznol"))
         );
 
-        FireInfo result = fireService.findPersonsAndFireStation("892 Downing Ct");
+        FireDTO result = fireService.findPersonsAndFireStation("892 Downing Ct");
         List<String> firstNames = result.getPersons().stream()
                 .map(PersonMedicalInfo::getFirstName)
                 .toList();
@@ -46,7 +46,7 @@ public class FireServiceIT {
     public void findAllHouseHoldsCoveredByStations(){
         List<Integer> stations = List.of(1,2);
 
-        List<FloodInfo> result = fireService.findAllHouseHoldsCoveredByStations(stations);
+        List<FloodDTO> result = fireService.findAllHouseHoldsCoveredByStations(stations);
 
         assertNotNull(result);
         assertEquals(6, result.size());
