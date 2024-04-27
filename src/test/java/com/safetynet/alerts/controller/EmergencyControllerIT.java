@@ -131,4 +131,57 @@ public class EmergencyControllerIT {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.length()").value(0));
     }
+
+    @Test
+    @DisplayName("Given there are persons, when searching by city, then return list of emails")
+    public void givenCoveredPersons_whenEnteringCity_thenReturnList() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/communityEmail?city={city}", "Culver")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(15));
+    }
+
+    @Test
+    @DisplayName("Given there are no persons, when searching by city, then return empty list")
+    public void givenNoCoveredPersons_whenEnteringCity_thenReturnEmptyList() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/communityEmail?city={city}", "No city")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    @DisplayName("Given there are persons, when searching by name, then return  list")
+    public void givenPerson_whenEnteringName_thenReturnList() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/personInfo")
+                        .param("firstName", "John")
+                        .param("lastName", "Boyd")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$.[0].firstName", is("John")))
+                .andExpect(jsonPath("$.[0].lastName", is("Boyd")))
+                .andExpect(jsonPath("$.[0].email", is("jaboyd@email.com")))
+                .andExpect(jsonPath("$.[0].medications.length()", is(2)))
+                .andExpect(jsonPath("$.[0].allergies.length()", is(1)));
+    }
+
+    @Test
+    @DisplayName("Given there are no persons, when searching by name, then return empty list")
+    public void givenNoPerson_whenEnteringName_thenReturnEmptyList() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/personInfo")
+                        .param("firstName", "No")
+                        .param("lastName", "Name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 }

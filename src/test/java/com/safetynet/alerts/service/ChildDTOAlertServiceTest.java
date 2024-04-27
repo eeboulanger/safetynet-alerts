@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.ChildDTO;
-import com.safetynet.alerts.dto.PersonInfo;
+import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
@@ -88,7 +88,7 @@ public class ChildDTOAlertServiceTest {
 
         when(personRepository.findByAddress(address)).thenReturn(Optional.of(Arrays.asList(mother, father)));
 
-        List<PersonInfo> result = service.findFamilyMembers(lastName, address, childName);
+        List<PersonContactInfo> result = service.findFamilyMembers(lastName, address, childName);
 
         verify(personRepository, times(1)).findByAddress(address);
         assertEquals(2, result.size());

@@ -1,31 +1,56 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.PersonInfoDTO;
+import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.repository.MedicalRecordRepository;
 import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 
 @Service
 public class CommunityService implements ICommunityService {
 
     @Autowired
     private PersonRepository personRepository;
+    @Autowired
+    private MedicalRecordRepository medicalRecordRepository;
+
 
     /**
-     * Finds all emails of citizens
-     * @param city used for searching
-     * @return a list of emails or an empty list of no persons found
+     * Finds all persons with the same first and last name.
+     *
+     * @param firstName
+     * @param lastName
+     * @return person info : name, address, age, mail, medications and allergies
      */
-    @Override
-    public Set<String> getAllEmails(String city) {
-        Optional<List<Person>> optionalList = personRepository.findAll();
+    public List<PersonInfoDTO> getAllPersonsByName(String firstName, String lastName) {
+        List<PersonInfoDTO> personInfoDTO = new ArrayList<>();
 
-        return optionalList.map(personList -> personList.stream()
-                .filter(person -> person.getCity().equals(city))
-                .map(Person::getEmail)
-                .collect(Collectors.toSet())).orElseGet(HashSet::new);
+        List<Person> personList = personRepository.findByName(firstName, lastName).orElse(Collections.emptyList());
+
+        for (Person person : personList) {
+            Optional<MedicalRecord> optionalMedicalRecord = medicalRecordRepository.findByName(firstName, lastName);
+
+            if (optionalMedicalRecord.isPresent()) {
+                MedicalRecord record = optionalMedicalRecord.get();
+
+                PersonInfoDTO dto = new PersonInfoDTO(
+                        firstName,
+                        lastName,
+                        person.getEmail(),
+                        calculateAge(record.getBirthdate(), "DD/mm/yyyy"),
+                        record.getMedications(),
+                        record.getAllergies()
+                );
+                personInfoDTO.add(dto);
+            }
+        }
+
+        return personInfoDTO;
     }
 }

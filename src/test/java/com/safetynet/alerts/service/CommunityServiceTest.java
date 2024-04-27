@@ -1,6 +1,9 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.PersonInfoDTO;
+import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.repository.MedicalRecordRepository;
 import com.safetynet.alerts.repository.PersonRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,10 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,47 +23,47 @@ public class CommunityServiceTest {
 
     @Mock
     private PersonRepository personRepository;
+    @Mock
+    private MedicalRecordRepository medicalRecordRepository;
 
     @InjectMocks
     private CommunityService communityService;
 
+
     @Test
-    public void getAllEmailsTest() {
-        List<Person> list = List.of(
-                new Person("Clive",
-                        "Ferguson",
-                        "748 Townings Dr",
-                        "Culver",
-                        97451,
-                        "841-874-6741",
-                        "clivfd@ymail.com"),
-                new Person("Eric",
-                        "Cadigan",
-                        "951 LoneTree Rd",
-                        "Culver",
-                        97451,
-                        "841-874-7458",
-                        "gramps@email.com"
-                )
+    @DisplayName("Given there are persons when entering first and last name, then return list")
+    public void getAllPersonsByName() {
+        Person person = new Person("John", "Boyd",
+                "1509 Culver St", "Culver", 97451,
+                "841-874-6512", "jaboyd@email.com");
+        MedicalRecord record = new MedicalRecord(
+                "John", "Boyd", "03/06/1984",
+                List.of("aznol:350mg", "hydrapermazol:100mg"),
+                List.of("nillacilan")
         );
 
-        when(personRepository.findAll()).thenReturn(Optional.of(list));
+        when(personRepository.findByName("John", "Boyd")).thenReturn(Optional.of(List.of(person)));
+        when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
-        Set<String> result = communityService.getAllEmails("Culver");
+        List<PersonInfoDTO> result = communityService.getAllPersonsByName("John", "Boyd");
 
-        verify(personRepository, times(1)).findAll();
-        assertEquals(2, result.size());
-        assertTrue(result.containsAll(List.of("gramps@email.com", "clivfd@ymail.com")));
+        verify(personRepository, times(1)).findByName("John", "Boyd");
+        verify(medicalRecordRepository, times(1)).findByName("John", "Boyd");
+        assertNotNull(result);
+        assertEquals(1, result.size());
     }
 
     @Test
-    @DisplayName("No persons in city should return empty list")
-    public void getAllEmailsWhenNoPersonsInCityTest() {
-        when(personRepository.findAll()).thenReturn(Optional.empty());
+    @DisplayName("Given there are no persons when entering first and last name, then return empty list")
+    public void getAllPersonsByName_whenNoPersons_thenReturnEmptyList() {
 
-        Set<String> result = communityService.getAllEmails("No city");
+        when(personRepository.findByName("John", "Boyd")).thenReturn(Optional.empty());
 
-        verify(personRepository, times(1)).findAll();
-        assertTrue(result.isEmpty());
+        List<PersonInfoDTO> result = communityService.getAllPersonsByName("John", "Boyd");
+
+        verify(personRepository, times(1)).findByName("John", "Boyd");
+        verify(medicalRecordRepository, never()).findByName("John", "Boyd");
+        assertNotNull(result);
+        assertEquals(0, result.size());
     }
 }

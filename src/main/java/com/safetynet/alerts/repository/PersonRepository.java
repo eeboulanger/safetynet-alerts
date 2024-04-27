@@ -43,4 +43,13 @@ public class PersonRepository implements DataRepository<Person> {
                 .filter(f -> f.getAddress().equals(address))
                 .collect(Collectors.toList()));
     }
+
+    public Optional<List<Person>> findByName(String firstName, String lastName) {
+        Optional<List<Person>> optionalList = this.findAll();
+
+        return optionalList.map(personList -> personList.stream()
+                .filter(person -> person.getFirstName().equals(firstName)
+                        && person.getLastName().equals(lastName))
+                .collect(Collectors.toList()));
+    }
 }

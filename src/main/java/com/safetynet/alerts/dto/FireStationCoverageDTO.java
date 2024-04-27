@@ -8,10 +8,10 @@ import java.util.Map;
 @Data
 public class FireStationCoverageDTO {
 
-    List<PersonInfo> personList;
+    List<PersonContactInfo> personList;
     Map<String, Integer> count;
 
-    public FireStationCoverageDTO(List<PersonInfo> personList, Map<String, Integer> count) {
+    public FireStationCoverageDTO(List<PersonContactInfo> personList, Map<String, Integer> count) {
         this.personList = personList;
         this.count = count;
     }

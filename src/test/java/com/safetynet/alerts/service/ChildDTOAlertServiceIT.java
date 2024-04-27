@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.ChildDTO;
-import com.safetynet.alerts.dto.PersonInfo;
+import com.safetynet.alerts.dto.PersonContactInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class ChildDTOAlertServiceIT {
     @Test
     @DisplayName("Given there are family members to a child then return a list of family members")
     public void findFamilyMembersTest(){
-        List<PersonInfo> result = service.findFamilyMembers("Boyd", "1509 Culver St", "Tenley");
+        List<PersonContactInfo> result = service.findFamilyMembers("Boyd", "1509 Culver St", "Tenley");
 
         assertEquals(4, result.size());
     }

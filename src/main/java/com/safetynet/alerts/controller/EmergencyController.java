@@ -3,10 +3,8 @@ package com.safetynet.alerts.controller;
 import com.safetynet.alerts.dto.FireDTO;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.dto.FloodDTO;
-import com.safetynet.alerts.service.IChildAlertService;
-import com.safetynet.alerts.service.IFireAndFloodService;
-import com.safetynet.alerts.service.IFireStationCoverageService;
-import com.safetynet.alerts.service.IPhoneAlertService;
+import com.safetynet.alerts.dto.PersonInfoDTO;
+import com.safetynet.alerts.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +19,17 @@ public class EmergencyController {
     private final IChildAlertService<?> childAlertService;
     private final IPhoneAlertService phoneAlertService;
     private final IFireAndFloodService fireAndFloodService;
+    private final ICommunityService communityService;
+    private final IEmailService emailService;
 
     @Autowired
-    public EmergencyController(IFireStationCoverageService<?> coverageService, IChildAlertService<?> childAlertService, IPhoneAlertService phoneAlertService, IFireAndFloodService fireAndFloodService) {
+    public EmergencyController(IFireStationCoverageService<?> coverageService, IChildAlertService<?> childAlertService, IPhoneAlertService phoneAlertService, IFireAndFloodService fireAndFloodService, ICommunityService communityService, IEmailService emailService) {
         this.coverageService = coverageService;
         this.childAlertService = childAlertService;
         this.phoneAlertService = phoneAlertService;
         this.fireAndFloodService = fireAndFloodService;
+        this.communityService = communityService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/firestation")
@@ -60,4 +62,15 @@ public class EmergencyController {
         return ResponseEntity.ok(floodDTOList);
     }
 
+    @GetMapping("/communityEmail")
+    public ResponseEntity<?> findAllHouseHoldsCoveredByStations(@RequestParam("city") String city) {
+        Set<String> emails = emailService.getAllEmails(city);
+        return ResponseEntity.ok(emails);
+    }
+
+    @GetMapping("/personInfo")
+    public ResponseEntity<?> findAllHouseHoldsCoveredByStations(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+        List<PersonInfoDTO> personInfo = communityService.getAllPersonsByName(firstName, lastName);
+        return ResponseEntity.ok(personInfo);
+    }
 }

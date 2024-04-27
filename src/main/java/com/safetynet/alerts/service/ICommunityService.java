@@ -1,12 +1,20 @@
 package com.safetynet.alerts.service;
 
-import java.util.Set;
+import com.safetynet.alerts.dto.PersonInfoDTO;
 
+import java.util.List;
+
+/**
+ * Handles search for person information in community
+ */
 public interface ICommunityService {
 
     /**
-     * Cette url doit retourner les adresses mail de tous les habitants de la ville.
+     * Finds all persons by name
+     *
+     * @param firstName
+     * @param lastName
+     * @return list of person information
      */
-
-    Set<String> getAllEmails(String city);
+    List<PersonInfoDTO> getAllPersonsByName(String firstName, String lastName);
 }

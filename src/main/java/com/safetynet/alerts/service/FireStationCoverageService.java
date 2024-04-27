@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
-import com.safetynet.alerts.dto.PersonInfo;
+import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.model.*;
 import com.safetynet.alerts.repository.FireStationRepository;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
@@ -67,9 +67,9 @@ public class FireStationCoverageService implements IFireStationCoverageService<F
      * @return list of person info objects - firstname, lastname, address, phonenumber
      */
 
-    public List<PersonInfo> getPersonInfoList(List<Person> personList) {
+    public List<PersonContactInfo> getPersonInfoList(List<Person> personList) {
         return personList.stream()
-                .map(person -> new PersonInfo(person.getFirstName(), person.getLastName(), person.getAddress(), person.getPhone()))
+                .map(person -> new PersonContactInfo(person.getFirstName(), person.getLastName(), person.getAddress(), person.getPhone()))
                 .collect(Collectors.toList());
     }
 

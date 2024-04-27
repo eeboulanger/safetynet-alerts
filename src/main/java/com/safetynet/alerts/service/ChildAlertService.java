@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.ChildDTO;
-import com.safetynet.alerts.dto.PersonInfo;
+import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,14 +52,14 @@ public class ChildAlertService implements IChildAlertService<ChildDTO> {
      * @param childName
      * @return list of person info containing firstname last name address and phone of the family member
      */
-    public List<PersonInfo> findFamilyMembers(String lastName, String address, String childName) {
+    public List<PersonContactInfo> findFamilyMembers(String lastName, String address, String childName) {
 
         return personRepository.findByAddress(address).stream()
                 .flatMap(Collection::stream)
                 .filter(person -> person.getAddress().equals(address)
                         && person.getLastName().equals(lastName)
                         && !person.getFirstName().equals(childName))
-                .map(person -> new PersonInfo(
+                .map(person -> new PersonContactInfo(
                                 person.getFirstName(),
                                 person.getLastName(),
                                 person.getAddress(),

@@ -1,14 +1,14 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.PersonInfoDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class CommunityServiceIT {
@@ -17,18 +17,27 @@ public class CommunityServiceIT {
     private CommunityService communityService;
 
     @Test
-    @DisplayName("Given there are persons when entering city then return a list of emails")
-    public void getAllEmails_whenPersons_thenReturnListOfEmails() {
-        Set<String> result = communityService.getAllEmails("Culver");
+    @DisplayName("Given there are persons with name then return list")
+    public void getAllPersonsByNameTest() {
 
-        assertEquals(15, result.size());
+        List<PersonInfoDTO> result = communityService.getAllPersonsByName("John", "Boyd");
+
+        assertEquals(1, result.size());
+        assertEquals("John", result.get(0).getFirstName());
+        assertEquals("Boyd", result.get(0).getLastName());
+        assertEquals(List.of("aznol:350mg", "hydrapermazol:100mg"), result.get(0).getMedications());
+        assertEquals(List.of("nillacilan"), result.get(0).getAllergies());
+        assertEquals("jaboyd@email.com", result.get(0).getEmail());
     }
 
     @Test
-    @DisplayName("Given there are no persons when entering the city then return empty list")
-    public void getAllEmails_whenNoPersons_thenReturnEmptyList() {
-        Set<String> result = communityService.getAllEmails("No city");
+    @DisplayName("Given there are no persons with name then return empty list")
+    public void getAllPersonsByNameTest_whenNoPerson_returnsEmptyList() {
 
-        assertTrue(result.isEmpty());
+        List<PersonInfoDTO> result = communityService.getAllPersonsByName("No", "Name");
+
+        assertEquals(0, result.size());
     }
+
+
 }
