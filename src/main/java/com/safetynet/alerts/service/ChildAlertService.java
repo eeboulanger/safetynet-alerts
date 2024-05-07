@@ -3,7 +3,6 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.dto.ChildDTO;
 import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -25,12 +24,12 @@ public class ChildAlertService implements IChildAlertService<ChildDTO> {
     @Autowired
     private MedicalRecordRepository recordRepository;
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
 
     @Override
     public List<ChildDTO> findAllChildren(String address) {
 
-        return personRepository.findByAddress(address).stream()
+        return personService.findByAddress(address).stream()
                 .flatMap(Collection::stream)
                 .flatMap(person -> recordRepository.findByName(person.getFirstName(), person.getLastName()).stream())
                 .filter(record -> calculateAge(record.getBirthdate(), "MM/dd/yyyy") <= 18)
@@ -54,7 +53,7 @@ public class ChildAlertService implements IChildAlertService<ChildDTO> {
      */
     public List<PersonContactInfo> findFamilyMembers(String lastName, String address, String childName) {
 
-        return personRepository.findByAddress(address).stream()
+        return personService.findByAddress(address).stream()
                 .flatMap(Collection::stream)
                 .filter(person -> person.getAddress().equals(address)
                         && person.getLastName().equals(lastName)

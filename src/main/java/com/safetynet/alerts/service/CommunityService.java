@@ -4,7 +4,6 @@ import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 public class CommunityService implements ICommunityService {
 
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
@@ -31,7 +30,7 @@ public class CommunityService implements ICommunityService {
     public List<PersonInfoDTO> getAllPersonsByName(String firstName, String lastName) {
         List<PersonInfoDTO> personInfoDTO = new ArrayList<>();
 
-        List<Person> personList = personRepository.findByName(firstName, lastName).orElse(Collections.emptyList());
+        List<Person> personList = personService.findByName(firstName, lastName).orElse(Collections.emptyList());
 
         for (Person person : personList) {
             Optional<MedicalRecord> optionalMedicalRecord = medicalRecordRepository.findByName(firstName, lastName);

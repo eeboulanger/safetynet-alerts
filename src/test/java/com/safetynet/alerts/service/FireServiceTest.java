@@ -6,7 +6,6 @@ import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.FireStationRepository;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class FireServiceTest {
 
     @Mock
-    private PersonRepository personRepository;
+    private PersonService personService;
     @Mock
     private FireStationRepository fireStationRepository;
     @Mock
@@ -38,11 +37,11 @@ public class FireServiceTest {
                 new Person("Jacob", "Boyd", "1509 Culver St", "Culver", 97451, "841-874-6512", "drk@email.com")
         );
 
-        when(personRepository.findByAddress("1509 Culver St")).thenReturn(Optional.of(list));
+        when(personService.findByAddress("1509 Culver St")).thenReturn(Optional.of(list));
 
         List<Person> result = fireService.findAllPersonsAtAddress("1509 Culver St");
 
-        verify(personRepository, times(1)).findByAddress("1509 Culver St");
+        verify(personService, times(1)).findByAddress("1509 Culver St");
         assertEquals(2, result.size());
     }
 

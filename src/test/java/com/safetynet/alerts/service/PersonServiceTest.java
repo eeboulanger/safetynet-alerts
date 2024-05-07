@@ -18,7 +18,7 @@ public class PersonServiceTest {
     private PersonRepository personRepository;
 
     @InjectMocks
-    private PersonService personService;
+    private com.safetynet.alerts.service.PersonService personService;
 
     private final Person person = new Person();
 

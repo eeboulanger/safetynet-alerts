@@ -21,7 +21,7 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 public class FireStationCoverageService implements IFireStationCoverageService<FireStationCoverageDTO> {
 
     @Autowired
-    PersonRepository personRepository;
+    PersonService personService;
     @Autowired
     FireStationRepository fireStationRepository;
     @Autowired
@@ -54,7 +54,7 @@ public class FireStationCoverageService implements IFireStationCoverageService<F
         });
 
         return addresses.stream()
-                .map(address -> personRepository.findByAddress(address))
+                .map(address -> personService.findByAddress(address))
                 .filter(Optional::isPresent)
                 .flatMap(optionalList -> optionalList.get().stream())
                 .collect(Collectors.toList());

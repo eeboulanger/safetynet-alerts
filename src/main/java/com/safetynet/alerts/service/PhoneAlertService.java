@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class PhoneAlertService implements IPhoneAlertService {
 
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
     @Autowired
     private FireStationRepository fireStationRepository;
 
@@ -24,7 +24,7 @@ public class PhoneAlertService implements IPhoneAlertService {
 
         return fireStationRepository.findByStationNumber(stationNumber).stream()
                 .flatMap(Collection::stream)
-                .flatMap(fireStation -> personRepository.findByAddress(fireStation.getAddress()).stream()
+                .flatMap(fireStation -> personService.findByAddress(fireStation.getAddress()).stream()
                         .flatMap(Collection::stream)
                         .map(Person::getPhone)
                 )

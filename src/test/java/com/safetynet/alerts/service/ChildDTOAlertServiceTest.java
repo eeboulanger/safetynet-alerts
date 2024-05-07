@@ -5,7 +5,6 @@ import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.*;
 public class ChildDTOAlertServiceTest {
 
     @Mock
-    private PersonRepository personRepository;
+    private PersonService personService;
     @Mock
     private MedicalRecordRepository medicalRecordRepository;
     @InjectMocks
@@ -37,12 +36,12 @@ public class ChildDTOAlertServiceTest {
         Person person = new Person("John", "Boyd", address, "City", 123, "000", "email@");
         MedicalRecord record = new MedicalRecord("John", "Boyd", "01/01/2020", null, null);
 
-        when(personRepository.findByAddress(address)).thenReturn(Optional.of(List.of(person)));
+        when(personService.findByAddress(address)).thenReturn(Optional.of(List.of(person)));
         when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
         List<ChildDTO> result = service.findAllChildren(address);
 
-        verify(personRepository, times(2)).findByAddress(address);
+        verify(personService, times(2)).findByAddress(address);
         verify(medicalRecordRepository).findByName("John", "Boyd");
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -52,11 +51,11 @@ public class ChildDTOAlertServiceTest {
     public void findAllChildren_whenNoPersonAtAddressTest() {
         String address = "1 rue de test";
 
-        when(personRepository.findByAddress(address)).thenReturn(Optional.empty());
+        when(personService.findByAddress(address)).thenReturn(Optional.empty());
 
         List<ChildDTO> result = service.findAllChildren(address);
 
-        verify(personRepository, times(1)).findByAddress(address);
+        verify(personService, times(1)).findByAddress(address);
         assertEquals(0, result.size());
     }
 
@@ -67,13 +66,13 @@ public class ChildDTOAlertServiceTest {
         Person person = new Person("John", "Boyd", address, "City", 123, "000", "email@");
         MedicalRecord record = new MedicalRecord("John", "Boyd", "01/01/1975", null, null);
 
-        when(personRepository.findByAddress(address)).thenReturn(Optional.of(List.of(person)));
+        when(personService.findByAddress(address)).thenReturn(Optional.of(List.of(person)));
         when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
 
         List<ChildDTO> result = service.findAllChildren(address);
 
-        verify(personRepository, times(1)).findByAddress(address);
+        verify(personService, times(1)).findByAddress(address);
         assertEquals(0, result.size());
     }
 
@@ -86,11 +85,11 @@ public class ChildDTOAlertServiceTest {
         Person mother = new Person("Marie", "Boyd", address, "City", 123, "000", "email@");
         Person father = new Person("Peter", "Boyd", address, "City", 123, "000", "email@");
 
-        when(personRepository.findByAddress(address)).thenReturn(Optional.of(Arrays.asList(mother, father)));
+        when(personService.findByAddress(address)).thenReturn(Optional.of(Arrays.asList(mother, father)));
 
         List<PersonContactInfo> result = service.findFamilyMembers(lastName, address, childName);
 
-        verify(personRepository, times(1)).findByAddress(address);
+        verify(personService, times(1)).findByAddress(address);
         assertEquals(2, result.size());
     }
 

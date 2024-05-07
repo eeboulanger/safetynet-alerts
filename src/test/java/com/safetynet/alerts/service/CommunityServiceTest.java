@@ -4,7 +4,6 @@ import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class CommunityServiceTest {
 
     @Mock
-    private PersonRepository personRepository;
+    private PersonService personService;
     @Mock
     private MedicalRecordRepository medicalRecordRepository;
 
@@ -42,12 +41,12 @@ public class CommunityServiceTest {
                 List.of("nillacilan")
         );
 
-        when(personRepository.findByName("John", "Boyd")).thenReturn(Optional.of(List.of(person)));
+        when(personService.findByName("John", "Boyd")).thenReturn(Optional.of(List.of(person)));
         when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
         List<PersonInfoDTO> result = communityService.getAllPersonsByName("John", "Boyd");
 
-        verify(personRepository, times(1)).findByName("John", "Boyd");
+        verify(personService, times(1)).findByName("John", "Boyd");
         verify(medicalRecordRepository, times(1)).findByName("John", "Boyd");
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -57,11 +56,11 @@ public class CommunityServiceTest {
     @DisplayName("Given there are no persons when entering first and last name, then return empty list")
     public void getAllPersonsByName_whenNoPersons_thenReturnEmptyList() {
 
-        when(personRepository.findByName("John", "Boyd")).thenReturn(Optional.empty());
+        when(personService.findByName("John", "Boyd")).thenReturn(Optional.empty());
 
         List<PersonInfoDTO> result = communityService.getAllPersonsByName("John", "Boyd");
 
-        verify(personRepository, times(1)).findByName("John", "Boyd");
+        verify(personService, times(1)).findByName("John", "Boyd");
         verify(medicalRecordRepository, never()).findByName("John", "Boyd");
         assertNotNull(result);
         assertEquals(0, result.size());

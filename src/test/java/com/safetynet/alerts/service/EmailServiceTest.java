@@ -1,7 +1,6 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.times;
 public class EmailServiceTest {
 
     @Mock
-    private PersonRepository personRepository;
+    private PersonService personService;
 
     @InjectMocks
     private EmailService emailService;
@@ -47,11 +46,11 @@ public class EmailServiceTest {
                 )
         );
 
-        when(personRepository.findAll()).thenReturn(Optional.of(list));
+        when(personService.findAll()).thenReturn(Optional.of(list));
 
         Set<String> result = emailService.getAllEmails("Culver");
 
-        verify(personRepository, times(1)).findAll();
+        verify(personService, times(1)).findAll();
         assertEquals(2, result.size());
         assertTrue(result.containsAll(List.of("gramps@email.com", "clivfd@ymail.com")));
     }
@@ -59,11 +58,11 @@ public class EmailServiceTest {
     @Test
     @DisplayName("No persons in city should return empty list")
     public void getAllEmailsWhenNoPersonsInCityTest() {
-        when(personRepository.findAll()).thenReturn(Optional.empty());
+        when(personService.findAll()).thenReturn(Optional.empty());
 
         Set<String> result = emailService.getAllEmails("No city");
 
-        verify(personRepository, times(1)).findAll();
+        verify(personService, times(1)).findAll();
         assertTrue(result.isEmpty());
     }
 }

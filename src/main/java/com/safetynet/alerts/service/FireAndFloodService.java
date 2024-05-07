@@ -21,7 +21,7 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 public class FireAndFloodService implements IFireAndFloodService {
 
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
     @Autowired
     private FireStationRepository fireStationRepository;
     @Autowired
@@ -90,7 +90,7 @@ public class FireAndFloodService implements IFireAndFloodService {
      * @return a list of persons
      */
     public List<Person> findAllPersonsAtAddress(String address) {
-        return personRepository.findByAddress(address).stream()
+        return personService.findByAddress(address).stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }

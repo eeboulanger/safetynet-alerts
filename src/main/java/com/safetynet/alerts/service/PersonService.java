@@ -5,6 +5,9 @@ import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class PersonService implements IPersonService {
 
@@ -24,5 +27,20 @@ public class PersonService implements IPersonService {
     @Override
     public boolean delete(Person person) {
         return personRepository.delete(person);
+    }
+
+    @Override
+    public Optional<List<Person>> findAll() {
+        return personRepository.findAll();
+    }
+
+    @Override
+    public Optional<List<Person>> findByAddress(String address) {
+        return personRepository.findByAddress(address);
+    }
+
+    @Override
+    public Optional<List<Person>> findByName(String firstName, String lastName) {
+        return personRepository.findByName(firstName, lastName);
     }
 }

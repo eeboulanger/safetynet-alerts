@@ -1,7 +1,6 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 public class EmailService implements IEmailService {
 
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
 
     /**
      * Finds all emails of citizens
@@ -25,7 +24,7 @@ public class EmailService implements IEmailService {
      */
     @Override
     public Set<String> getAllEmails(String city) {
-        Optional<List<Person>> optionalList = personRepository.findAll();
+        Optional<List<Person>> optionalList = personService.findAll();
 
         return optionalList.map(personList -> personList.stream()
                 .filter(person -> person.getCity().equals(city))
