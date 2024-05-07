@@ -8,6 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +25,8 @@ public class PersonServiceTest {
     private com.safetynet.alerts.service.PersonService personService;
 
     private final Person person = new Person();
+
+    private final Map<String, String> personId = new HashMap<>();
 
     @Test
     public void createNewPersonTest() {
@@ -42,10 +48,11 @@ public class PersonServiceTest {
 
     @Test
     public void deletePersonTest() {
-        when(personRepository.delete(person)).thenReturn(true);
+        when(personRepository.delete(personId)).thenReturn(true);
 
-        personService.delete(person);
+        boolean result = personService.delete(personId);
 
-        verify(personRepository).delete(person);
+        verify(personRepository).delete(personId);
+        assertTrue(result);
     }
 }

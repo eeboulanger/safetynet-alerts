@@ -7,6 +7,7 @@ import com.safetynet.alerts.util.JsonDataReaderFromFile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class FireStationRepository implements DataRepository<FireStation> {
     }
 
     @Override
-    public boolean delete(FireStation entity) {
+    public boolean delete(Map<String, String> identifier) {
         return false;
     }
 

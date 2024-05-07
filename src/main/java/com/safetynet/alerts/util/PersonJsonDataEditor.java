@@ -7,6 +7,7 @@ import com.safetynet.alerts.model.Person;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
     private static final String JSON_DATA_PATH = "./data/data.json";
@@ -79,12 +80,12 @@ public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
     }
 
     @Override
-    public boolean delete(Person person) {
+    public boolean delete(Map<String, String> map) {
         boolean isDeleted = false;
         if (personList != null) {
             try {
-                isDeleted = personList.removeIf(p -> p.getFirstName().equals(person.getFirstName())
-                        && p.getLastName().equals(person.getLastName()));
+                isDeleted = personList.removeIf(p -> p.getFirstName().equals(map.get("firstName"))
+                        && p.getLastName().equals(map.get("lastName")));
 
                 if (isDeleted) {
                     saveData();

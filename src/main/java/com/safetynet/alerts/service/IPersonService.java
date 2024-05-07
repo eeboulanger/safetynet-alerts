@@ -4,6 +4,7 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.model.Person;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -17,7 +18,7 @@ public interface IPersonService {
 
     boolean update(Person person);
 
-    boolean delete(Person person);
+    boolean delete(Map<String, String> personId);
 
     Optional<List<Person>> findAll();
 

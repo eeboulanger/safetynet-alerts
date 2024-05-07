@@ -9,6 +9,7 @@ import com.safetynet.alerts.util.PersonJsonDataEditor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,8 +26,8 @@ public class PersonRepository implements DataRepository<Person> {
     }
 
     @Override
-    public boolean delete(Person person) {
-        return editor.delete(person);
+    public boolean delete(Map<String,String> personId) {
+        return editor.delete(personId);
     }
 
     @Override

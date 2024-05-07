@@ -2,8 +2,10 @@ package com.safetynet.alerts.util;
 
 import com.safetynet.alerts.model.Person;
 
+import java.util.Map;
+
 /**
- * For any class editing data to an existing json file
+ * For any class editing data in an existing json file
  */
 public interface IJsonDataEditor<T> {
 
@@ -11,6 +13,6 @@ public interface IJsonDataEditor<T> {
 
     boolean update(T entity);
 
-    boolean delete(T entity);
+    boolean delete(Map<String, String> identifier);
 
 }

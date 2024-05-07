@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,8 +26,8 @@ public class PersonService implements IPersonService {
     }
 
     @Override
-    public boolean delete(Person person) {
-        return personRepository.delete(person);
+    public boolean delete(Map<String, String> personId) {
+        return personRepository.delete(personId);
     }
 
     @Override

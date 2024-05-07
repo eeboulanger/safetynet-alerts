@@ -3,9 +3,7 @@ package com.safetynet.alerts.repository;
 import com.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -109,9 +107,21 @@ public class PersonRepositoryTest {
 
         @AfterAll
         public static void resetData() {
-            repository.delete(personCreated);
-            repository.delete(personDuplicated);
-            repository.delete(personUpdated);
+
+            repository.delete(Map.of(
+                    "firstName", personCreated.getFirstName(),
+                    "lastName", personCreated.getLastName()
+            ));
+
+            repository.delete(Map.of(
+                    "firstName", personDuplicated.getFirstName(),
+                    "lastName", personDuplicated.getLastName()
+            ));
+
+            repository.delete(Map.of(
+                    "firstName", personUpdated.getFirstName(),
+                    "lastName", personUpdated.getLastName()
+            ));
         }
 
         @Test
@@ -152,15 +162,23 @@ public class PersonRepositoryTest {
         public void deletePersonTest() {
             repository.create(personDeleted);
 
-            boolean result = repository.delete(personDeleted);
+            Map<String, String> personId = Map.of(
+                    "firstName", personDeleted.getFirstName(),
+                    "lastName", personDeleted.getLastName()
+            );
+
+            boolean result = repository.delete(personId);
 
             assertTrue(result);
         }
 
         @Test
         public void deletePerson_whenNoSuchPerson_shouldFail() {
-
-            boolean result = repository.delete(personUnexisting);
+            Map<String, String> personId = Map.of(
+                    "firstName", personUnexisting.getFirstName(),
+                    "lastName", personUnexisting.getLastName()
+            );
+            boolean result = repository.delete(personId);
 
             assertFalse(result);
         }

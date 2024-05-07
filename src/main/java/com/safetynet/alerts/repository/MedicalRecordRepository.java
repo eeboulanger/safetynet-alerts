@@ -7,6 +7,7 @@ import com.safetynet.alerts.util.JsonDataReaderFromFile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class MedicalRecordRepository implements DataRepository<MedicalRecord> {
     }
 
     @Override
-    public boolean delete(MedicalRecord entity) {
+    public boolean delete(Map<String, String> identifier) {
         return false;
     }
 
