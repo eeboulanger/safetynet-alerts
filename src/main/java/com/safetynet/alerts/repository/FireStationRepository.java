@@ -22,18 +22,18 @@ public class FireStationRepository implements DataRepository<FireStation> {
     }
 
     @Override
-    public void delete(FireStation entity) {
-
+    public boolean delete(FireStation entity) {
+        return false;
     }
 
     @Override
-    public void create(FireStation entity) {
-
+    public boolean create(FireStation entity) {
+        return false;
     }
 
     @Override
-    public void update(FireStation entity) {
-
+    public boolean update(FireStation entity) {
+        return false;
     }
 
     public Optional<List<FireStation>> findByStationNumber(int number) {

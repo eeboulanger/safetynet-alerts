@@ -22,18 +22,18 @@ public class MedicalRecordRepository implements DataRepository<MedicalRecord> {
     }
 
     @Override
-    public void delete(MedicalRecord entity) {
-
+    public boolean delete(MedicalRecord entity) {
+        return false;
     }
 
     @Override
-    public void create(MedicalRecord entity) {
-
+    public boolean create(MedicalRecord entity) {
+        return false;
     }
 
     @Override
-    public void update(MedicalRecord entity) {
-
+    public boolean update(MedicalRecord entity) {
+        return false;
     }
 
     public Optional<MedicalRecord> findByName(String firstName, String lastName) {
