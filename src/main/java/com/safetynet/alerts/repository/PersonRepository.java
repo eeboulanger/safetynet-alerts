@@ -2,8 +2,10 @@ package com.safetynet.alerts.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.util.IJsonDataEditor;
 import com.safetynet.alerts.util.IJsonDataReader;
 import com.safetynet.alerts.util.JsonDataReaderFromFile;
+import com.safetynet.alerts.util.PersonJsonDataEditor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 public class PersonRepository implements DataRepository<Person> {
 
     IJsonDataReader reader = new JsonDataReaderFromFile();
+    IJsonDataEditor<Person> editor = new PersonJsonDataEditor();
 
     @Override
     public Optional<List<Person>> findAll() {
@@ -22,18 +25,18 @@ public class PersonRepository implements DataRepository<Person> {
     }
 
     @Override
-    public void delete(Person entity) {
-
+    public boolean delete(Person person) {
+        return editor.delete(person);
     }
 
     @Override
-    public void create(Person entity) {
-
+    public boolean create(Person person) {
+        return editor.create(person);
     }
 
     @Override
-    public void update(Person entity) {
-
+    public boolean update(Person person) {
+        return editor.update(person);
     }
 
     public Optional<List<Person>> findByAddress(String address) {

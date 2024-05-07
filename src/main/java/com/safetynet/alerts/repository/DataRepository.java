@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface DataRepository<T> {
     Optional<List<T>> findAll();
 
-    void delete(T entity);
+    boolean delete(T entity);
 
-    void create(T entity);
+    boolean create(T entity);
 
-    void update(T entity);
+    boolean update(T entity);
 }

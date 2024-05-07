@@ -1,7 +1,7 @@
 package com.safetynet.alerts.repository;
 
 import com.safetynet.alerts.model.Person;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PersonRepositoryTest {
 
-    private final PersonRepository repository = new PersonRepository();
+    private static final PersonRepository repository = new PersonRepository();
 
     @Test
     public void getAllPersonsFromJsonTest() {
@@ -43,5 +43,126 @@ public class PersonRepositoryTest {
 
         assertFalse(persons.isEmpty());
         assertEquals(5, persons.size());
+    }
+
+    @Nested
+    public class DataEditingTests {
+
+        private static Person personCreated;
+        private static Person personDuplicated;
+        private static Person personUpdated;
+        private static Person personDeleted;
+        private static Person personUnexisting;
+
+        @BeforeAll
+        public static void setUp() {
+            personCreated = new Person(
+                    "Test create",
+                    "Smith",
+                    "address",
+                    "city",
+                    1234,
+                    "111",
+                    "email"
+            );
+
+            personDuplicated = new Person(
+                    "Test duplicate",
+                    "Smith",
+                    "address",
+                    "city",
+                    1234,
+                    "111",
+                    "email"
+            );
+
+            personUpdated = new Person(
+                    "Test update",
+                    "Smith",
+                    "address",
+                    "city",
+                    1234,
+                    "111",
+                    "email"
+            );
+
+            personDeleted = new Person(
+                    "Test delete",
+                    "Smith",
+                    "address",
+                    "city",
+                    1234,
+                    "111",
+                    "email"
+            );
+
+            personUnexisting = new Person(
+                    "Test unexisting",
+                    "Smith",
+                    "address",
+                    "city",
+                    1234,
+                    "111",
+                    "email"
+            );
+        }
+
+        @AfterAll
+        public static void resetData() {
+            repository.delete(personCreated);
+            repository.delete(personDuplicated);
+            repository.delete(personUpdated);
+        }
+
+        @Test
+        public void createNewPersonTest() {
+
+            boolean result = repository.create(personCreated);
+
+            assertTrue(result);
+        }
+
+        @Test
+        public void createNewPerson_whenExistAlready_shouldReturnFalse() {
+            repository.create(personDuplicated);
+            boolean result = repository.create(personDuplicated);
+
+            assertFalse(result);
+        }
+
+        @Test
+        public void updatePersonTest() {
+            repository.create(personUpdated);
+            personUpdated.setAddress("Updated address");
+
+            boolean result = repository.update(personUpdated);
+
+            assertTrue(result);
+        }
+
+        @Test
+        public void updatePerson_whenNoSuchPerson_shouldFail() {
+
+            boolean result = repository.update(personUnexisting);
+
+            assertFalse(result);
+        }
+
+        @Test
+        public void deletePersonTest() {
+            repository.create(personDeleted);
+
+            boolean result = repository.delete(personDeleted);
+
+            assertTrue(result);
+        }
+
+        @Test
+        public void deletePerson_whenNoSuchPerson_shouldFail() {
+
+            boolean result = repository.delete(personUnexisting);
+
+            assertFalse(result);
+        }
     }
 }

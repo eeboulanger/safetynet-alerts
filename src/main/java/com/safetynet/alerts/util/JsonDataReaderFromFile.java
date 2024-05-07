@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -14,13 +15,14 @@ import java.util.Optional;
  */
 public class JsonDataReaderFromFile implements IJsonDataReader{
 
-    private static final String jsonPath = "data.json";
+    private static final String JSON_DATA_PATH = "./data/data.json";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public <T> Optional<List<T>> findAll(String model, TypeReference<List<T>> typeReference) {
 
-        try (InputStream inputStream = JsonDataReaderFromFile.class.getClassLoader().getResourceAsStream(jsonPath)) {
-            JsonNode root = mapper.readTree(inputStream);
+        try  {
+            File jsonFile = new File(JSON_DATA_PATH);
+            JsonNode root = mapper.readTree(jsonFile);
             JsonNode node = root.get(model);
 
             if (node == null || node.isEmpty()) {
