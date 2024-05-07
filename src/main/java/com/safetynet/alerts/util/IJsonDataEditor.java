@@ -1,7 +1,5 @@
 package com.safetynet.alerts.util;
 
-import com.safetynet.alerts.model.Person;
-
 import java.util.Map;
 
 /**
