@@ -16,12 +16,13 @@ public class PersonController {
     @PostMapping("/person")
     public String createPerson(@RequestBody Person person) {
         boolean isCreated = personService.create(person);
+        return isCreated ? "Person has been successfully saved" : "Saving person has failed";
+    }
 
-        if (isCreated) {
-            return "Person has been successfully saved";
-        } else {
-            return "Saving person has failed";
-        }
+    @PutMapping("/person")
+    public String updatePerson(@RequestBody Person person) {
+        boolean isUpdated = personService.update(person);
+        return isUpdated ? "Person has been successfully updated" : "Updating person has failed";
     }
 
     @DeleteMapping("/person")
@@ -30,10 +31,7 @@ public class PersonController {
                 "firstName", firstName,
                 "lastName", lastName
         ));
-        if (isDeleted) {
-            return "Person has been successfully deleted";
-        } else {
-            return "Failed to delete person with the given name";
-        }
+        return isDeleted ? "Person has been successfully deleted" : "Failed to delete person with the given name";
+
     }
 }

@@ -13,6 +13,4 @@ public class DataContainer {
 
     public DataContainer() {
     }
-
-    ;
 }
