@@ -2,6 +2,8 @@ package com.safetynet.alerts.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.safetynet.alerts.model.FireStation;
+import com.safetynet.alerts.util.FireStationJsonDataEditor;
+import com.safetynet.alerts.util.IJsonDataEditor;
 import com.safetynet.alerts.util.IJsonDataReader;
 import com.safetynet.alerts.util.JsonDataReaderFromFile;
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,23 @@ import java.util.stream.Collectors;
 public class FireStationRepository implements DataRepository<FireStation> {
 
     IJsonDataReader reader = new JsonDataReaderFromFile();
+    IJsonDataEditor<FireStation> editor = new FireStationJsonDataEditor();
+
+
+    @Override
+    public boolean create(FireStation fireStation) {
+        return editor.create(fireStation);
+    }
+
+    @Override
+    public boolean update(FireStation fireStation) {
+        return editor.update(fireStation);
+    }
+
+    @Override
+    public boolean delete(Map<String, String> identifier) {
+        return editor.delete(identifier);
+    }
 
     @Override
     public Optional<List<FireStation>> findAll() {
@@ -22,23 +41,7 @@ public class FireStationRepository implements DataRepository<FireStation> {
         });
     }
 
-    @Override
-    public boolean delete(Map<String, String> identifier) {
-        return false;
-    }
-
-    @Override
-    public boolean create(FireStation entity) {
-        return false;
-    }
-
-    @Override
-    public boolean update(FireStation entity) {
-        return false;
-    }
-
     public Optional<List<FireStation>> findByStationNumber(int number) {
-
         Optional<List<FireStation>> optionalList = this.findAll();
         return optionalList.map(fireStations -> fireStations.stream()
                 .filter(f -> f.getStation() == number)

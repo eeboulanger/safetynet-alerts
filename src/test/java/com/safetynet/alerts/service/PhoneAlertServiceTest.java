@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class PhoneAlertServiceTest {
     @Mock
-    private FireStationRepository fireStationRepository;
+    private FireStationService fireStationService;
     @Mock
     private PersonService personService;
     @InjectMocks
@@ -41,13 +41,13 @@ public class PhoneAlertServiceTest {
         List<Person> personAddress2 = List.of(new Person("Tina", "Smith", "address2", null, 123, "222-222", null)
         );
 
-        when(fireStationRepository.findByStationNumber(1)).thenReturn(Optional.of(fireStations));
+        when(fireStationService.findByStationNumber(1)).thenReturn(Optional.of(fireStations));
         when(personService.findByAddress("address1")).thenReturn(Optional.of(personsAddress1));
         when(personService.findByAddress("address2")).thenReturn(Optional.of(personAddress2));
 
         Set<String> result = phoneAlertService.findPhoneNumbersByFireStation(1);
 
-        verify(fireStationRepository, times(1)).findByStationNumber(1);
+        verify(fireStationService, times(1)).findByStationNumber(1);
         verify(personService, times(1)).findByAddress("address1");
         verify(personService, times(1)).findByAddress("address2");
         assertEquals(2, result.size());

@@ -18,11 +18,11 @@ public class PhoneAlertService implements IPhoneAlertService {
     @Autowired
     private PersonService personService;
     @Autowired
-    private FireStationRepository fireStationRepository;
+    private FireStationService fireStationService;
 
     public Set<String> findPhoneNumbersByFireStation(int stationNumber) {
 
-        return fireStationRepository.findByStationNumber(stationNumber).stream()
+        return fireStationService.findByStationNumber(stationNumber).stream()
                 .flatMap(Collection::stream)
                 .flatMap(fireStation -> personService.findByAddress(fireStation.getAddress()).stream()
                         .flatMap(Collection::stream)

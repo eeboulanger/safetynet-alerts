@@ -1,17 +1,60 @@
 package com.safetynet.alerts.repository;
 
+import com.safetynet.alerts.DataPrepareService;
 import com.safetynet.alerts.model.FireStation;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FireStationRepositoryTest {
-
+public class FireStationRepositoryIT {
     private final FireStationRepository repository = new FireStationRepository();
+    private DataPrepareService dataPrepareService;
+
+    @BeforeEach
+    public void setUp() {
+        dataPrepareService = new DataPrepareService();
+    }
+    @AfterEach
+    public void tearDown() throws IOException {
+        dataPrepareService.resetData();
+    }
+
+    @Test
+    public void deleteFireStationTest() {
+        FireStation station = dataPrepareService.getFireStation(0);
+        boolean isDeleted = repository.delete(Map.of(
+                "address", station.getAddress(),
+                "station", String.valueOf(station.getStation())
+        ));
+        assertTrue(isDeleted);
+    }
+
+    @Test
+    public void updateFireStationTest() {
+        FireStation station = dataPrepareService.getFireStation(0);
+        station.setStation(20);
+
+        boolean isUpdated = repository.update(station);
+
+        assertTrue(isUpdated);
+    }
+
+    @Test
+    public void createFireStationTest() {
+        FireStation station = new FireStation("Firestation address", 123);
+
+        boolean isCreated = repository.create(station);
+
+        assertTrue(isCreated);
+    }
 
     @Test
     public void getAllPersonsFromJsonTest() {

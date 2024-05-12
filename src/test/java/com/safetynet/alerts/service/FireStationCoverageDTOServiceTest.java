@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class FireStationCoverageDTOServiceTest {
 
     @Mock
-    FireStationRepository fireStationRepository;
+    FireStationService fireStationService;
 
     @Mock
     Optional<List<FireStation>> mockedStations;
@@ -30,11 +30,11 @@ public class FireStationCoverageDTOServiceTest {
 
     @Test
     public void getListOfPersonsCoveredByStation() {
-        when(fireStationRepository.findByStationNumber(1)).thenReturn(mockedStations);
+        when(fireStationService.findByStationNumber(1)).thenReturn(mockedStations);
 
         FireStationCoverageDTO coverage = service.findPersonsCoveredByFireStation(1);
 
-        verify(fireStationRepository).findByStationNumber(1);
+        verify(fireStationService).findByStationNumber(1);
         assertNotNull(coverage);
     }
 }

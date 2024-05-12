@@ -2,11 +2,11 @@ package com.safetynet.alerts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.model.DataContainer;
+import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.Person;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DataPrepareService {
@@ -32,9 +32,25 @@ public class DataPrepareService {
         return currentData.getPersons().get(i);
     }
 
+    public List<Person> getPersons() {
+        return currentData.getPersons();
+    }
+
+    public List<FireStation> getFireStations() {
+        return currentData.getFirestations();
+    }
+
+    public FireStation getFireStation(int i) {
+        return currentData.getFirestations().get(i);
+    }
+
     public void resetData() throws IOException {
         if (originalData != null) {
             mapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, originalData);
         }
+    }
+
+    public DataContainer getData() throws IOException {
+        return mapper.readValue(jsonFile, DataContainer.class);
     }
 }

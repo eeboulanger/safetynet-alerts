@@ -24,7 +24,7 @@ public class FireServiceTest {
     @Mock
     private PersonService personService;
     @Mock
-    private FireStationRepository fireStationRepository;
+    private FireStationService fireStationService;
     @Mock
     private MedicalRecordRepository medicalRecordRepository;
     @InjectMocks
@@ -83,7 +83,7 @@ public class FireServiceTest {
     public void findFireStationTest() {
 
         FireStation fireStation = new FireStation("1509 Culver St", 1);
-        when(fireStationRepository.findStationByAddress("1509 Culver St")).thenReturn(Optional.of(fireStation));
+        when(fireStationService.findStationByAddress("1509 Culver St")).thenReturn(Optional.of(fireStation));
 
         int result = fireService.findFireStation("1509 Culver St");
 

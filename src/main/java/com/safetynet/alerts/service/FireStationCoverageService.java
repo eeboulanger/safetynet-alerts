@@ -3,9 +3,8 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.model.*;
-import com.safetynet.alerts.repository.FireStationRepository;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
-import com.safetynet.alerts.repository.PersonRepository;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -23,7 +22,7 @@ public class FireStationCoverageService implements IFireStationCoverageService<F
     @Autowired
     PersonService personService;
     @Autowired
-    FireStationRepository fireStationRepository;
+    FireStationService fireStationService;
     @Autowired
     MedicalRecordRepository medicalRecordRepository;
 
@@ -43,7 +42,7 @@ public class FireStationCoverageService implements IFireStationCoverageService<F
      * @return a list of persons
      */
     public List<Person> findAllPersons(int number) {
-        Optional<List<FireStation>> optionalFireStations = fireStationRepository.findByStationNumber(number);
+        Optional<List<FireStation>> optionalFireStations = fireStationService.findByStationNumber(number);
 
         Set<String> addresses = new HashSet<>();
 

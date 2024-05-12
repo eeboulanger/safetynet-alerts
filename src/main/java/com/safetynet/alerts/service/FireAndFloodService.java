@@ -23,7 +23,7 @@ public class FireAndFloodService implements IFireAndFloodService {
     @Autowired
     private PersonService personService;
     @Autowired
-    private FireStationRepository fireStationRepository;
+    private FireStationService fireStationService;
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
@@ -33,7 +33,7 @@ public class FireAndFloodService implements IFireAndFloodService {
         List<FloodDTO> floodDTOList = new ArrayList<>();
 
         for (int stationNumber : fireStationNumbers) {
-            Optional<List<FireStation>> optional = fireStationRepository.findByStationNumber(stationNumber);
+            Optional<List<FireStation>> optional = fireStationService.findByStationNumber(stationNumber);
 
             //A fire station can have multiple addresses so get all of them
             if (optional.isPresent()) {
@@ -127,7 +127,7 @@ public class FireAndFloodService implements IFireAndFloodService {
      * @return number
      */
     public int findFireStation(String address) {
-        return fireStationRepository.findStationByAddress(address)
+        return fireStationService.findStationByAddress(address)
                 .map(FireStation::getStation)
                 .orElse(0);
     }

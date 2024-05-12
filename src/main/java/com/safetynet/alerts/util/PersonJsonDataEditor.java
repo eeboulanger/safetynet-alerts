@@ -33,10 +33,9 @@ public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
         if (personList != null) {
             try {
                 //Check person doesn't exist already
-                for (int i = 0; i < personList.size(); i++) {
-                    if (personList.get(i).getFirstName().equals(person.getFirstName())
-                            && personList.get(i).getLastName().equals(person.getLastName())) {
-                        personList.set(i, person);
+                for (Person value : personList) {
+                    if (value.getFirstName().equals(person.getFirstName())
+                            && value.getLastName().equals(person.getLastName())) {
 
                         System.out.println("There's already a person with the same name");
                         return false;
