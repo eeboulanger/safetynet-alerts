@@ -25,7 +25,7 @@ public class FireAndFloodService implements IFireAndFloodService {
     @Autowired
     private FireStationService fireStationService;
     @Autowired
-    private MedicalRecordRepository medicalRecordRepository;
+    private MedicalRecordService medicalRecordService;
 
     @Override
     public List<FloodDTO> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {
@@ -77,7 +77,7 @@ public class FireAndFloodService implements IFireAndFloodService {
      */
     public List<MedicalRecord> findMedicalRecord(List<Person> persons) {
         return persons.stream()
-                .map(person -> medicalRecordRepository.findByName(person.getFirstName(), person.getLastName()))
+                .map(person -> medicalRecordService.findByName(person.getFirstName(), person.getLastName()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());

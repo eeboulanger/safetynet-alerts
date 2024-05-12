@@ -25,7 +25,7 @@ public class ChildDTOAlertServiceTest {
     @Mock
     private PersonService personService;
     @Mock
-    private MedicalRecordRepository medicalRecordRepository;
+    private MedicalRecordService recordService;
     @InjectMocks
     private ChildAlertService service;
 
@@ -37,12 +37,12 @@ public class ChildDTOAlertServiceTest {
         MedicalRecord record = new MedicalRecord("John", "Boyd", "01/01/2020", null, null);
 
         when(personService.findByAddress(address)).thenReturn(Optional.of(List.of(person)));
-        when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
+        when(recordService.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
         List<ChildDTO> result = service.findAllChildren(address);
 
         verify(personService, times(2)).findByAddress(address);
-        verify(medicalRecordRepository).findByName("John", "Boyd");
+        verify(recordService).findByName("John", "Boyd");
         assertNotNull(result);
         assertEquals(1, result.size());
     }
@@ -67,7 +67,7 @@ public class ChildDTOAlertServiceTest {
         MedicalRecord record = new MedicalRecord("John", "Boyd", "01/01/1975", null, null);
 
         when(personService.findByAddress(address)).thenReturn(Optional.of(List.of(person)));
-        when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
+        when(recordService.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
 
         List<ChildDTO> result = service.findAllChildren(address);

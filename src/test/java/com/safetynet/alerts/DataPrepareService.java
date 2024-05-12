@@ -3,6 +3,7 @@ package com.safetynet.alerts;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.FireStation;
+import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 
 import java.io.File;
@@ -32,16 +33,24 @@ public class DataPrepareService {
         return currentData.getPersons().get(i);
     }
 
-    public List<Person> getPersons() {
+    public List<Person> getPersonsList() {
         return currentData.getPersons();
     }
 
-    public List<FireStation> getFireStations() {
+    public List<FireStation> getFireStationsList() {
         return currentData.getFirestations();
     }
 
     public FireStation getFireStation(int i) {
         return currentData.getFirestations().get(i);
+    }
+
+    public MedicalRecord getMedicalRecord(int i) {
+        return currentData.getMedicalrecords().get(i);
+    }
+
+    public List<MedicalRecord> getMedicalRecordsList() {
+        return currentData.getMedicalrecords();
     }
 
     public void resetData() throws IOException {

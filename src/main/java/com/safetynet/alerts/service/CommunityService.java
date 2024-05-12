@@ -17,7 +17,7 @@ public class CommunityService implements ICommunityService {
     @Autowired
     private PersonService personService;
     @Autowired
-    private MedicalRecordRepository medicalRecordRepository;
+    private MedicalRecordService medicalRecordService;
 
 
     /**
@@ -33,7 +33,7 @@ public class CommunityService implements ICommunityService {
         List<Person> personList = personService.findByName(firstName, lastName).orElse(Collections.emptyList());
 
         for (Person person : personList) {
-            Optional<MedicalRecord> optionalMedicalRecord = medicalRecordRepository.findByName(firstName, lastName);
+            Optional<MedicalRecord> optionalMedicalRecord = medicalRecordService.findByName(firstName, lastName);
 
             if (optionalMedicalRecord.isPresent()) {
                 MedicalRecord record = optionalMedicalRecord.get();

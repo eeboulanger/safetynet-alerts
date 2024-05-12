@@ -62,7 +62,7 @@ public class FireStationJsonDataEditorTest {
     @Test
     public void deleteFireStationTest() throws IOException {
         FireStation existingFirestation = dataPrepareService.getFireStation(0);
-        int numberOfStations = dataPrepareService.getFireStations().size();
+        int numberOfStations = dataPrepareService.getFireStationsList().size();
 
         boolean isDeleted = editor.delete(Map.of(
                         "address", existingFirestation.getAddress(),

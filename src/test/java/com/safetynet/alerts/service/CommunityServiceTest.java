@@ -23,7 +23,7 @@ public class CommunityServiceTest {
     @Mock
     private PersonService personService;
     @Mock
-    private MedicalRecordRepository medicalRecordRepository;
+    private MedicalRecordService recordService;
 
     @InjectMocks
     private CommunityService communityService;
@@ -42,12 +42,12 @@ public class CommunityServiceTest {
         );
 
         when(personService.findByName("John", "Boyd")).thenReturn(Optional.of(List.of(person)));
-        when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record));
+        when(recordService.findByName("John", "Boyd")).thenReturn(Optional.of(record));
 
         List<PersonInfoDTO> result = communityService.getAllPersonsByName("John", "Boyd");
 
         verify(personService, times(1)).findByName("John", "Boyd");
-        verify(medicalRecordRepository, times(1)).findByName("John", "Boyd");
+        verify(recordService, times(1)).findByName("John", "Boyd");
         assertNotNull(result);
         assertEquals(1, result.size());
     }
@@ -61,7 +61,7 @@ public class CommunityServiceTest {
         List<PersonInfoDTO> result = communityService.getAllPersonsByName("John", "Boyd");
 
         verify(personService, times(1)).findByName("John", "Boyd");
-        verify(medicalRecordRepository, never()).findByName("John", "Boyd");
+        verify(recordService, never()).findByName("John", "Boyd");
         assertNotNull(result);
         assertEquals(0, result.size());
     }

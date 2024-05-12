@@ -24,7 +24,7 @@ public class FireStationCoverageService implements IFireStationCoverageService<F
     @Autowired
     FireStationService fireStationService;
     @Autowired
-    MedicalRecordRepository medicalRecordRepository;
+    MedicalRecordService recordService;
 
 
     public FireStationCoverageDTO findPersonsCoveredByFireStation(int stationNumber) {
@@ -94,7 +94,7 @@ public class FireStationCoverageService implements IFireStationCoverageService<F
      * @return the record
      */
     public Optional<MedicalRecord> getMedicalRecord(String firstName, String lastName) {
-        return medicalRecordRepository.findByName(firstName, lastName);
+        return recordService.findByName(firstName, lastName);
     }
 
     /**

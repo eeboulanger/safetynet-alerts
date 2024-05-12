@@ -26,7 +26,7 @@ public class FireServiceTest {
     @Mock
     private FireStationService fireStationService;
     @Mock
-    private MedicalRecordRepository medicalRecordRepository;
+    private MedicalRecordService recordService;
     @InjectMocks
     private FireAndFloodService fireService;
 
@@ -54,12 +54,12 @@ public class FireServiceTest {
         MedicalRecord record1 = new MedicalRecord("John", "Boyd", "03/06/1984", null, null);
         MedicalRecord record2 = new MedicalRecord("Jacob", "Boyd", "03/06/1984", null, null);
 
-        when(medicalRecordRepository.findByName("John", "Boyd")).thenReturn(Optional.of(record1));
-        when(medicalRecordRepository.findByName("Jacob", "Boyd")).thenReturn(Optional.of(record2));
+        when(recordService.findByName("John", "Boyd")).thenReturn(Optional.of(record1));
+        when(recordService.findByName("Jacob", "Boyd")).thenReturn(Optional.of(record2));
 
         List<MedicalRecord> result = fireService.findMedicalRecord(list);
 
-        verify(medicalRecordRepository, times(2)).findByName(anyString(), anyString());
+        verify(recordService, times(2)).findByName(anyString(), anyString());
         assertEquals(2, result.size());
     }
 
