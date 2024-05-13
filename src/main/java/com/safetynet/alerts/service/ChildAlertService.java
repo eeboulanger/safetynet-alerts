@@ -3,6 +3,8 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.dto.ChildDTO;
 import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 @Service
 @Primary
 public class ChildAlertService implements IChildAlertService<ChildDTO> {
+
+    private static Logger logger = LoggerFactory.getLogger(ChildAlertService.class);
 
     @Autowired
     private MedicalRecordService recordService;

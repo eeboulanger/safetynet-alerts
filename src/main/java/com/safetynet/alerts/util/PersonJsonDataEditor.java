@@ -3,6 +3,8 @@ package com.safetynet.alerts.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.Person;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
+    private static final Logger logger = LoggerFactory.getLogger(PersonJsonDataEditor.class);
     private static final String JSON_DATA_PATH = "./data/data.json";
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final File jsonFile = new File(JSON_DATA_PATH);
@@ -24,7 +27,7 @@ public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
                 personList = data.getPersons();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to initialize person editor: " + e);
         }
     }
 
@@ -37,27 +40,24 @@ public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
                     if (value.getFirstName().equals(person.getFirstName())
                             && value.getLastName().equals(person.getLastName())) {
 
-                        System.out.println("There's already a person with the same name");
+                        logger.debug("Failed to create new person. There's already a person with the same name");
                         return false;
                     }
                 }
                 personList.add(person);
                 saveData();
                 return true;
-
             } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+                logger.error("Failed to create new person: " + e);
             }
-        } else {
-            return false;
         }
+        logger.debug("Failed to create new person. There's no list of persons");
+        return false;
     }
 
     @Override
     public boolean update(Person person) {
         boolean isUpdated = false;
-
         if (personList != null) {
             try {
                 for (int i = 0; i < personList.size(); i++) {
@@ -70,11 +70,14 @@ public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
                 }
                 if (isUpdated) {
                     saveData();
+                } else {
+                    logger.debug("Failed to update person. There's no person with the given name.");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Failed to update person: " + e);
             }
         }
+        logger.debug("Failed to update person. There's no list of persons.");
         return isUpdated;
     }
 
@@ -85,14 +88,16 @@ public class PersonJsonDataEditor implements IJsonDataEditor<Person> {
             try {
                 isDeleted = personList.removeIf(p -> p.getFirstName().equals(map.get("firstName"))
                         && p.getLastName().equals(map.get("lastName")));
-
                 if (isDeleted) {
                     saveData();
+                } else {
+                    logger.debug("Failed to delete person. There's no person with the given name.");
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Failed to delete person: " + e);
             }
         }
+        logger.debug("Failed to delete person. There's no list of persons.");
         return isDeleted;
     }
 

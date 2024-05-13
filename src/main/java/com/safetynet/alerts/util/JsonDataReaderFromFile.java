@@ -3,10 +3,11 @@ package com.safetynet.alerts.util;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
  * Reads data from json file and convert to java objects
  */
 public class JsonDataReaderFromFile implements IJsonDataReader{
-
+    private static final Logger logger = LoggerFactory.getLogger(JsonDataReaderFromFile.class);
     private static final String JSON_DATA_PATH = "./data/data.json";
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -32,7 +33,7 @@ public class JsonDataReaderFromFile implements IJsonDataReader{
             List<T> result = mapper.convertValue(node, typeReference);
             return Optional.of(result);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to read from file: " + e);
             return Optional.empty();
         }
     }

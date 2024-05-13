@@ -3,6 +3,8 @@ package com.safetynet.alerts.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.MedicalRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MedicalRecordJsonDataEditor implements IJsonDataEditor<MedicalRecord> {
-
+    private static final Logger logger = LoggerFactory.getLogger(MedicalRecordJsonDataEditor.class);
     private static final String JSON_DATA_PATH = "./data/data.json";
     private final File jsonFile = new File(JSON_DATA_PATH);
     private final ObjectMapper mapper = new ObjectMapper();
@@ -24,28 +26,30 @@ public class MedicalRecordJsonDataEditor implements IJsonDataEditor<MedicalRecor
                 medicalRecordList = data.getMedicalrecords();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to initialize medical record editor: " + e);
         }
     }
 
     @Override
     public boolean create(MedicalRecord record) {
-        try {
-            if (medicalRecordList != null) {
+        if (medicalRecordList != null) {
+            try {
                 //check if medical record already exists
                 for (MedicalRecord medicalRecord : medicalRecordList) {
                     if (record.getFirstName().equals(medicalRecord.getFirstName())
                             && record.getLastName().equals(medicalRecord.getLastName())) {
+                        logger.debug("Failed to create new medical record, there's already a record with the same name");
                         return false;
                     }
                 }
                 medicalRecordList.add(record);
                 saveData();
                 return true;
+            } catch (Exception e) {
+                logger.error("Failed to create medical record: " + e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        logger.debug("Failed to create new medical record. Medical record list doesn't exist.");
         return false;
     }
 
@@ -62,9 +66,10 @@ public class MedicalRecordJsonDataEditor implements IJsonDataEditor<MedicalRecor
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Failed to update medical record: " + e);
             }
         }
+        logger.debug("Failed to update medical record, there is no list of medical records");
         return false;
     }
 
@@ -77,11 +82,14 @@ public class MedicalRecordJsonDataEditor implements IJsonDataEditor<MedicalRecor
                 if (isDeleted) {
                     saveData();
                     return true;
+                } else {
+                    logger.debug("Failed to delete medical record, there is no record with the given name");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Failed to delete medical record: " + e);
             }
         }
+        logger.debug("Failed to delete medical record, there is no list of medical records");
         return false;
     }
 
