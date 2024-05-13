@@ -1,8 +1,6 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.repository.FireStationRepository;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -16,9 +14,9 @@ import java.util.stream.Collectors;
 public class PhoneAlertService implements IPhoneAlertService {
 
     @Autowired
-    private PersonService personService;
+    private IPersonService personService;
     @Autowired
-    private FireStationService fireStationService;
+    private IFireStationService fireStationService;
 
     public Set<String> findPhoneNumbersByFireStation(int stationNumber) {
 

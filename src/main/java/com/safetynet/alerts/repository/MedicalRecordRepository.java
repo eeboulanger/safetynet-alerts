@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class MedicalRecordRepository implements DataRepository<MedicalRecord> {
+public class MedicalRecordRepository implements IMedicalRecordRepository {
 
     private final IJsonDataReader reader = new JsonDataReaderFromFile();
     private final IJsonDataEditor<MedicalRecord> editor = new MedicalRecordJsonDataEditor();

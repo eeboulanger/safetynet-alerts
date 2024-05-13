@@ -6,9 +6,6 @@ import com.safetynet.alerts.dto.PersonMedicalInfo;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.repository.FireStationRepository;
-import com.safetynet.alerts.repository.MedicalRecordRepository;
-import com.safetynet.alerts.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +18,11 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 public class FireAndFloodService implements IFireAndFloodService {
 
     @Autowired
-    private PersonService personService;
+    private IPersonService personService;
     @Autowired
-    private FireStationService fireStationService;
+    private IFireStationService fireStationService;
     @Autowired
-    private MedicalRecordService medicalRecordService;
+    private IMedicalRecordService medicalRecordService;
 
     @Override
     public List<FloodDTO> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {

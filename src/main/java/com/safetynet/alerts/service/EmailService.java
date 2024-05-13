@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class EmailService implements IEmailService {
 
     @Autowired
-    private PersonService personService;
+    private IPersonService personService;
 
     /**
      * Finds all emails of citizens

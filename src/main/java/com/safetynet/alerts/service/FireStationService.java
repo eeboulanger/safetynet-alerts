@@ -2,6 +2,7 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.repository.FireStationRepository;
+import com.safetynet.alerts.repository.IFireStationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 public class FireStationService implements IFireStationService {
 
     @Autowired
-    FireStationRepository repository;
+    IFireStationRepository repository;
 
     @Override
     public Optional<List<FireStation>> findByStationNumber(int stationNumber) {

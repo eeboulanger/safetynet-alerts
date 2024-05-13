@@ -3,7 +3,6 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.repository.MedicalRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +14,9 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 public class CommunityService implements ICommunityService {
 
     @Autowired
-    private PersonService personService;
+    private IPersonService personService;
     @Autowired
-    private MedicalRecordService medicalRecordService;
+    private IMedicalRecordService medicalRecordService;
 
 
     /**

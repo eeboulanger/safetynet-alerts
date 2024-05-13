@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public class FireStationRepository implements DataRepository<FireStation> {
+public class FireStationRepository implements IFireStationRepository {
 
     IJsonDataReader reader = new JsonDataReaderFromFile();
     IJsonDataEditor<FireStation> editor = new FireStationJsonDataEditor();

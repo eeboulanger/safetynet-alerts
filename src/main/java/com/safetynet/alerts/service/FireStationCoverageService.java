@@ -3,8 +3,6 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.dto.PersonContactInfo;
 import com.safetynet.alerts.model.*;
-import com.safetynet.alerts.repository.MedicalRecordRepository;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -20,11 +18,11 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 public class FireStationCoverageService implements IFireStationCoverageService<FireStationCoverageDTO> {
 
     @Autowired
-    PersonService personService;
+    IPersonService personService;
     @Autowired
-    FireStationService fireStationService;
+    IFireStationService fireStationService;
     @Autowired
-    MedicalRecordService recordService;
+    IMedicalRecordService recordService;
 
 
     public FireStationCoverageDTO findPersonsCoveredByFireStation(int stationNumber) {

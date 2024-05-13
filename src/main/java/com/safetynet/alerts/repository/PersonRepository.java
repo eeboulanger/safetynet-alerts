@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public class PersonRepository implements DataRepository<Person> {
+public class PersonRepository implements IPersonRepository {
 
     IJsonDataReader reader = new JsonDataReaderFromFile();
     IJsonDataEditor<Person> editor = new PersonJsonDataEditor();
@@ -26,7 +26,7 @@ public class PersonRepository implements DataRepository<Person> {
     }
 
     @Override
-    public boolean delete(Map<String,String> personId) {
+    public boolean delete(Map<String, String> personId) {
         return editor.delete(personId);
     }
 
