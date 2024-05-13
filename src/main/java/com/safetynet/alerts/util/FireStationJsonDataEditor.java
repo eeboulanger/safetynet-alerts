@@ -3,8 +3,8 @@ package com.safetynet.alerts.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.FireStation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FireStationJsonDataEditor implements IJsonDataEditor<FireStation> {
-    private static final Logger logger = LoggerFactory.getLogger(FireStationJsonDataEditor.class);
+    private static final Logger logger = LogManager.getLogger(FireStationJsonDataEditor.class);
     private static final String JSON_DATA_PATH = "./data/data.json";
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final File jsonFile = new File(JSON_DATA_PATH);

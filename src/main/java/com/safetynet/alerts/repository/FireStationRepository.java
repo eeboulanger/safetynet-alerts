@@ -16,9 +16,8 @@ import java.util.stream.Collectors;
 @Repository
 public class FireStationRepository implements IFireStationRepository {
 
-    IJsonDataReader reader = new JsonDataReaderFromFile();
-    IJsonDataEditor<FireStation> editor = new FireStationJsonDataEditor();
-
+    private final IJsonDataReader reader = new JsonDataReaderFromFile();
+    private final IJsonDataEditor<FireStation> editor = new FireStationJsonDataEditor();
 
     @Override
     public boolean create(FireStation fireStation) {

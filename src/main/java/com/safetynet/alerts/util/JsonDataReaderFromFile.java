@@ -3,8 +3,8 @@ package com.safetynet.alerts.util;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +14,14 @@ import java.util.Optional;
 /**
  * Reads data from json file and convert to java objects
  */
-public class JsonDataReaderFromFile implements IJsonDataReader{
-    private static final Logger logger = LoggerFactory.getLogger(JsonDataReaderFromFile.class);
+public class JsonDataReaderFromFile implements IJsonDataReader {
+    private static final Logger logger = LogManager.getLogger(JsonDataReaderFromFile.class);
     private static final String JSON_DATA_PATH = "./data/data.json";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public <T> Optional<List<T>> findAll(String model, TypeReference<List<T>> typeReference) {
 
-        try  {
+        try {
             File jsonFile = new File(JSON_DATA_PATH);
             JsonNode root = mapper.readTree(jsonFile);
             JsonNode node = root.get(model);

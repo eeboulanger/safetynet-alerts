@@ -8,7 +8,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class PersonRepositoryTest {
+public class PersonRepositoryIT {
 
     private static final PersonRepository repository = new PersonRepository();
 

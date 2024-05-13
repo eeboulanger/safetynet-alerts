@@ -3,8 +3,8 @@ package com.safetynet.alerts.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.MedicalRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MedicalRecordJsonDataEditor implements IJsonDataEditor<MedicalRecord> {
-    private static final Logger logger = LoggerFactory.getLogger(MedicalRecordJsonDataEditor.class);
+    private static final Logger logger = LogManager.getLogger(MedicalRecordJsonDataEditor.class);
     private static final String JSON_DATA_PATH = "./data/data.json";
     private final File jsonFile = new File(JSON_DATA_PATH);
     private final ObjectMapper mapper = new ObjectMapper();

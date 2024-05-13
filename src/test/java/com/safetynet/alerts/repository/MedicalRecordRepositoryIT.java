@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MedicalRecordRepositoryTest {
+public class MedicalRecordRepositoryIT {
 
     private final MedicalRecordRepository repository = new MedicalRecordRepository();
     private DataPrepareService dataPrepareService;
