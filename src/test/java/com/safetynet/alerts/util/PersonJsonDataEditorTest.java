@@ -1,92 +1,258 @@
 package com.safetynet.alerts.util;
 
-import com.safetynet.alerts.DataPrepareService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class PersonJsonDataEditorTest {
 
-    private static final PersonJsonDataEditor personJsonDataEditor = new PersonJsonDataEditor();
-    private static DataPrepareService dataPrepareService;
-    Person unexistingPerson = new Person("Empty", "Empty", null, null, 111, null, null);
+    @Mock
+    private ObjectMapper mapper;
+    @Mock
+    private ObjectWriter objectWriter;
+    @InjectMocks
+    private PersonJsonDataEditor editor;
+    private static DataContainer dataContainer;
+    private static Person existingPerson;
 
-    @BeforeAll
-    public static void setUp() {
-        dataPrepareService = new DataPrepareService();
+    @Nested
+    public class SuccessfulEditingTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            //initialize data for testing
+            dataContainer = new DataContainer();
+            existingPerson = new Person("FirstName",
+                    "LastName",
+                    "address",
+                    "city",
+                    123,
+                    "phone",
+                    "email");
+
+            List<Person> list = new ArrayList<>();
+            list.add(existingPerson);
+            dataContainer.setPersons(list);
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenReturn(dataContainer);
+            when(mapper.writerWithDefaultPrettyPrinter()).thenReturn(objectWriter);
+            doNothing().when(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
+
+        @Test
+        public void createPersonTest() throws IOException {
+            Person p = new Person();
+            p.setLastName("New person");
+            p.setFirstName("Test");
+            boolean isCreated = editor.create(p);
+
+            assertTrue(isCreated);
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            verify(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
+
+        @Test
+        public void updatePersonTest() throws IOException {
+            boolean isUpdated = editor.update(existingPerson);
+
+            assertTrue(isUpdated);
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            verify(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
+
+        @Test
+        public void deletePersonTest() throws IOException {
+            boolean isDeleted = editor.delete(Map.of(
+                    "firstName", existingPerson.getFirstName(),
+                    "lastName", existingPerson.getLastName())
+            );
+
+            assertTrue(isDeleted);
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            verify(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
     }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        dataPrepareService.resetData();
+    @Nested
+    public class EditingFailsTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            //initialize data for testing
+            dataContainer = new DataContainer();
+            existingPerson = new Person("FirstName",
+                    "LastName",
+                    "address",
+                    "city",
+                    123,
+                    "phone",
+                    "email");
+
+            List<Person> list = new ArrayList<>();
+            list.add(existingPerson);
+            dataContainer.setPersons(list);
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenReturn(dataContainer);
+        }
+
+        @Test
+        @DisplayName("Create person when a person with the same name exists should fail")
+        public void create_whenAlreadyExists_shouldFail() {
+
+            boolean result = editor.create(existingPerson); //person exists already
+
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Update when no person with the name exists should fail")
+        public void updatePerson_whenNoPersonExists_shouldFail() {
+            Person p = new Person();
+            p.setLastName("");
+            p.setFirstName("");
+            boolean result = editor.update(p); //no person exists
+
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Delete when no person with the name exists should fail")
+        public void deletePerson_whenNoPersonExists_shouldFail() {
+            Person p = new Person();
+            p.setLastName("");
+            p.setFirstName("");
+            boolean result = editor.delete(Map.of(
+                    "firstname", p.getFirstName(),
+                    "lastname", p.getLastName())
+            );
+
+            assertFalse(result);
+        }
+
     }
 
-    @Test
-    public void createNewPersonTest() {
-        Person person = new Person();
-        person.setFirstName("Test");
-        person.setLastName("Test");
+    @Nested
+    public class ReadValueFailsTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            //initialize data for testing
+            dataContainer = new DataContainer();
+            existingPerson = new Person("FirstName",
+                    "LastName",
+                    "address",
+                    "city",
+                    123,
+                    "phone",
+                    "email");
 
-        boolean isCreated = personJsonDataEditor.create(person);
+            List<Person> list = new ArrayList<>();
+            list.add(existingPerson);
+            dataContainer.setPersons(list);
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenThrow(IOException.class);
+        }
 
-        assertTrue(isCreated);
+        @Test
+        @DisplayName("Create when unable to read data should fail")
+        public void create_whenFailsToReadData_shouldFail() throws IOException {
+            Person p = new Person();
+            p.setLastName("");
+            p.setFirstName("");
+            boolean result = editor.create(p);
+
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Update when unable to read data should fail")
+        public void update_whenFailsToReadData_shouldFail() throws IOException {
+
+            boolean result = editor.update(existingPerson);
+
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Delete when unable to read data should fail")
+        public void delete_whenFailsToReadData_shouldFail() throws IOException {
+
+            boolean result = editor.delete(Map.of(
+                    "firsNname", existingPerson.getFirstName(),
+                    "lastName", existingPerson.getLastName()));
+
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            assertFalse(result);
+        }
     }
 
-    @Test
-    @DisplayName("Create new person when person already exists in file should fail")
-    public void createNewPersonWhenAlreadyExists_thenReturnFalse() {
-        Person existingPerson = dataPrepareService.getPerson(0);
 
-        boolean isCreated = personJsonDataEditor.create(existingPerson);
+    @Nested
+    public class WriteValueFailsTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            //initialize data for testing
+            dataContainer = new DataContainer();
+            existingPerson = new Person("FirstName",
+                    "LastName",
+                    "address",
+                    "city",
+                    123,
+                    "phone",
+                    "email");
 
-        assertFalse(isCreated);
-    }
+            List<Person> list = new ArrayList<>();
+            list.add(existingPerson);
+            dataContainer.setPersons(list);
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenReturn(dataContainer);
+            when(mapper.writerWithDefaultPrettyPrinter()).thenReturn(objectWriter);
+            doThrow(IOException.class).when(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
 
-    @Test
-    public void updatePersonTest() {
-        Person person = dataPrepareService.getPerson(0);
-        person.setCity("New city");
+        @Test
+        @DisplayName("Create when unable to write data should fail")
+        public void create_whenFailsToWriteData_shouldFail() {
+            Person p = new Person();
+            p.setLastName("");
+            p.setFirstName("");
+            boolean result = editor.create(p);
 
-        boolean isUpdated = personJsonDataEditor.update(person);
+            assertFalse(result);
+        }
 
-        assertTrue(isUpdated);
-    }
+        @Test
+        @DisplayName("Update when unable to write data should fail")
+        public void update_whenFailsToWriteData_shouldFail() {
+            System.out.println(dataContainer.getPersons());
+            boolean result = editor.update(existingPerson);
 
-    @Test
-    @DisplayName("Updating person when no person with the name exists in the file should return false")
-    public void updatePerson_whenNoPerson_shouldReturnFalse() {
-        boolean isUpdated = personJsonDataEditor.update(unexistingPerson);
+            assertFalse(result);
+        }
 
-        assertFalse(isUpdated);
-    }
+        @Test
+        @DisplayName("Delete when unable to write data should fail")
+        public void delete_whenFailsToWriteData_shouldFail() {
 
-    @Test
-    public void deleteNewPersonTest() {
-        Person person = dataPrepareService.getPerson(0);
-        Map<String, String> personId = Map.of(
-                "firstName", person.getFirstName(),
-                "lastName", person.getLastName()
-        );
+            boolean result = editor.delete(Map.of(
+                    "firstName", existingPerson.getFirstName(),
+                    "lastName", existingPerson.getLastName()));
 
-        boolean isDeleted = personJsonDataEditor.delete(personId);
-
-        assertTrue(isDeleted);
-    }
-
-    @Test
-    @DisplayName("delete person when no person with name in file should fail")
-    public void deleteNewPerson_whenNoPersonWithName_shouldReturnFalse() {
-        Map<String, String> personId = Map.of(
-                "firstName", unexistingPerson.getFirstName(),
-                "lastName", unexistingPerson.getLastName()
-        );
-
-        boolean isDeleted = personJsonDataEditor.delete(personId);
-
-        assertFalse(isDeleted);
+            assertFalse(result);
+        }
     }
 }

@@ -1,16 +1,16 @@
-package com.safetynet.alerts.model;
+    package com.safetynet.alerts.model;
 
-import lombok.Data;
+    import lombok.Data;
 
-import java.util.List;
+    import java.util.List;
 
-@Data
-public class DataContainer {
+    @Data
+    public class DataContainer {
 
-    private List<Person> persons;
-    private List<FireStation> firestations;
-    private List<MedicalRecord> medicalrecords;
+        private List<Person> persons;
+        private List<FireStation> firestations;
+        private List<MedicalRecord> medicalrecords;
 
-    public DataContainer() {
+        public DataContainer() {
+        }
     }
-}

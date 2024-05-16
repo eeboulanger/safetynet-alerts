@@ -9,8 +9,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,6 +28,9 @@ public class PersonServiceTest {
     private com.safetynet.alerts.service.PersonService personService;
 
     private final Person person = new Person();
+    private final List<Person> list = List.of(
+            new Person("Firstname", "Lastname", "address", "city", 123, "phone", "email")
+    );
 
     private final Map<String, String> personId = new HashMap<>();
 
@@ -32,18 +38,20 @@ public class PersonServiceTest {
     public void createNewPersonTest() {
         when(personRepository.create(person)).thenReturn(true);
 
-        personService.create(person);
+        boolean result = personService.create(person);
 
         verify(personRepository).create(person);
+        assertTrue(result);
     }
 
     @Test
     public void updatePersonTest() {
         when(personRepository.update(person)).thenReturn(true);
 
-        personService.update(person);
+        boolean result = personService.update(person);
 
         verify(personRepository).update(person);
+        assertTrue(result);
     }
 
     @Test
@@ -54,5 +62,38 @@ public class PersonServiceTest {
 
         verify(personRepository).delete(personId);
         assertTrue(result);
+    }
+
+    @Test
+    public void findAllTest() {
+        when(personRepository.findAll()).thenReturn(Optional.of(list));
+
+        Optional<List<Person>> result = personService.findAll();
+
+        verify(personRepository).findAll();
+        assertTrue(result.isPresent());
+        assertEquals(1, result.get().size());
+    }
+
+    @Test
+    public void findByAddressTest() {
+        when(personRepository.findByAddress("address")).thenReturn(Optional.of(list));
+
+        Optional<List<Person>> result = personService.findByAddress("address");
+
+        verify(personRepository).findByAddress("address");
+        assertTrue(result.isPresent());
+        assertEquals(1, result.get().size());
+    }
+
+    @Test
+    public void findByNameTest() {
+        when(personRepository.findByName("Firstname", "Lastname")).thenReturn(Optional.of(list));
+
+        Optional<List<Person>> result = personService.findByName("Firstname", "Lastname");
+
+        verify(personRepository).findByName("Firstname", "Lastname");
+        assertTrue(result.isPresent());
+        assertEquals(1, result.get().size());
     }
 }

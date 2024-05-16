@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class FireStationCoverageController {
 
     @Autowired
-    private IFireStationCoverageService<FireStationCoverageDTO> coverageService;
+    private IFireStationCoverageService<?> coverageService;
 
     @GetMapping("/firestation")
-    public FireStationCoverageDTO getFireStationCoverage(@RequestParam("stationNumber") int stationNumber) {
+    public Object getFireStationCoverage(@RequestParam("stationNumber") int stationNumber) {
         return coverageService.findPersonsCoveredByFireStation(stationNumber);
     }
 }

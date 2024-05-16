@@ -1,6 +1,5 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.FireDTO;
 import com.safetynet.alerts.service.IFireAndFloodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,7 @@ public class FireController {
     private IFireAndFloodService fireAndFloodService;
 
     @GetMapping("/fire")
-    public FireDTO getListOfPersonsAndFireStationNumber(@RequestParam("address") String address) {
+    public Object getListOfPersonsAndFireStationNumber(@RequestParam("address") String address) {
         return fireAndFloodService.findPersonsAndFireStation(address);
     }
 }

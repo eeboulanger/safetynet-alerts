@@ -1,7 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.service.PersonService;
+import com.safetynet.alerts.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 public class PersonController {
 
     @Autowired
-    PersonService personService;
+    private IPersonService personService;
 
     @PostMapping("/person")
     public String createPerson(@RequestBody Person person) {
@@ -31,7 +31,7 @@ public class PersonController {
                 "firstName", firstName,
                 "lastName", lastName
         ));
-        return isDeleted ? "Person has been successfully deleted" : "Failed to delete person with the given name";
+        return isDeleted ? "Person has been successfully deleted" : "Deleting person has failed";
 
     }
 }

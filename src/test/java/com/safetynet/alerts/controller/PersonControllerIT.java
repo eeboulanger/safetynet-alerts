@@ -115,6 +115,6 @@ public class PersonControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$").value("Failed to delete person with the given name"));
+                .andExpect(jsonPath("$").value("Deleting person has failed"));
     }
 }

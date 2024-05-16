@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.util.IJsonDataEditor;
 import com.safetynet.alerts.util.IJsonDataReader;
-import com.safetynet.alerts.util.JsonDataReaderFromFile;
 import com.safetynet.alerts.util.MedicalRecordJsonDataEditor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,8 +16,10 @@ import java.util.Optional;
 @Repository
 public class MedicalRecordRepository implements IMedicalRecordRepository {
 
-    private final IJsonDataReader reader = new JsonDataReaderFromFile();
-    private final IJsonDataEditor<MedicalRecord> editor = new MedicalRecordJsonDataEditor();
+    @Autowired
+    private IJsonDataReader reader;
+    @Autowired
+    private IJsonDataEditor<MedicalRecord> editor;
 
     @Override
     public Optional<List<MedicalRecord>> findAll() {

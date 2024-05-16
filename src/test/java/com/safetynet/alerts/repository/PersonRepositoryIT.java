@@ -1,16 +1,21 @@
 package com.safetynet.alerts.repository;
 
+import com.safetynet.alerts.DataPrepareService;
 import com.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@SpringBootTest
 public class PersonRepositoryIT {
 
-    private static final PersonRepository repository = new PersonRepository();
+    @Autowired
+    private PersonRepository repository;
 
     @Test
     public void getAllPersonsFromJsonTest() {
@@ -46,15 +51,21 @@ public class PersonRepositoryIT {
     @Nested
     public class DataEditingTests {
 
-        private static Person personCreated;
-        private static Person personDuplicated;
-        private static Person personUpdated;
-        private static Person personDeleted;
-        private static Person personUnexisting;
+        private DataPrepareService dataPrepareService;
 
-        @BeforeAll
-        public static void setUp() {
-            personCreated = new Person(
+        @BeforeEach
+        public void setUp() {
+            dataPrepareService = new DataPrepareService();
+        }
+
+        @AfterEach
+        public void tearDown() throws IOException {
+            dataPrepareService.resetData();
+        }
+
+        @Test
+        public void createNewPersonTest() {
+            Person personCreated = new Person(
                     "Test create",
                     "Smith",
                     "address",
@@ -64,69 +75,6 @@ public class PersonRepositoryIT {
                     "email"
             );
 
-            personDuplicated = new Person(
-                    "Test duplicate",
-                    "Smith",
-                    "address",
-                    "city",
-                    1234,
-                    "111",
-                    "email"
-            );
-
-            personUpdated = new Person(
-                    "Test update",
-                    "Smith",
-                    "address",
-                    "city",
-                    1234,
-                    "111",
-                    "email"
-            );
-
-            personDeleted = new Person(
-                    "Test delete",
-                    "Smith",
-                    "address",
-                    "city",
-                    1234,
-                    "111",
-                    "email"
-            );
-
-            personUnexisting = new Person(
-                    "Test unexisting",
-                    "Smith",
-                    "address",
-                    "city",
-                    1234,
-                    "111",
-                    "email"
-            );
-        }
-
-        @AfterAll
-        public static void resetData() {
-
-            repository.delete(Map.of(
-                    "firstName", personCreated.getFirstName(),
-                    "lastName", personCreated.getLastName()
-            ));
-
-            repository.delete(Map.of(
-                    "firstName", personDuplicated.getFirstName(),
-                    "lastName", personDuplicated.getLastName()
-            ));
-
-            repository.delete(Map.of(
-                    "firstName", personUpdated.getFirstName(),
-                    "lastName", personUpdated.getLastName()
-            ));
-        }
-
-        @Test
-        public void createNewPersonTest() {
-
             boolean result = repository.create(personCreated);
 
             assertTrue(result);
@@ -134,6 +82,7 @@ public class PersonRepositoryIT {
 
         @Test
         public void createNewPerson_whenExistAlready_shouldReturnFalse() {
+            Person personDuplicated = dataPrepareService.getPerson(0);
             repository.create(personDuplicated);
             boolean result = repository.create(personDuplicated);
 
@@ -142,6 +91,7 @@ public class PersonRepositoryIT {
 
         @Test
         public void updatePersonTest() {
+            Person personUpdated = dataPrepareService.getPerson(1);
             repository.create(personUpdated);
             personUpdated.setAddress("Updated address");
 
@@ -152,6 +102,9 @@ public class PersonRepositoryIT {
 
         @Test
         public void updatePerson_whenNoSuchPerson_shouldFail() {
+            Person personUnexisting = new Person();
+            personUnexisting.setFirstName("No such person");
+            personUnexisting.setLastName("Test");
 
             boolean result = repository.update(personUnexisting);
 
@@ -160,6 +113,7 @@ public class PersonRepositoryIT {
 
         @Test
         public void deletePersonTest() {
+            Person personDeleted = dataPrepareService.getPerson(2);
             repository.create(personDeleted);
 
             Map<String, String> personId = Map.of(
@@ -174,6 +128,10 @@ public class PersonRepositoryIT {
 
         @Test
         public void deletePerson_whenNoSuchPerson_shouldFail() {
+            Person personUnexisting = new Person();
+            personUnexisting.setFirstName("No such person");
+            personUnexisting.setLastName("Test");
+
             Map<String, String> personId = Map.of(
                     "firstName", personUnexisting.getFirstName(),
                     "lastName", personUnexisting.getLastName()

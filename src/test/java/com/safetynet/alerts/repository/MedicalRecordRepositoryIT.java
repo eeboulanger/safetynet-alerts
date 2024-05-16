@@ -5,6 +5,8 @@ import com.safetynet.alerts.model.MedicalRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,9 +16,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class MedicalRecordRepositoryIT {
-
-    private final MedicalRecordRepository repository = new MedicalRecordRepository();
+    @Autowired
+    private MedicalRecordRepository repository;
     private DataPrepareService dataPrepareService;
 
     @BeforeEach

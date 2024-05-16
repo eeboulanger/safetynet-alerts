@@ -17,7 +17,6 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
  * Returns a list of Child info as dto, containing first name, last name, age and a list of family members
  */
 @Service
-@Primary
 public class ChildAlertService implements IChildAlertService<ChildDTO> {
     @Autowired
     private IMedicalRecordService recordService;

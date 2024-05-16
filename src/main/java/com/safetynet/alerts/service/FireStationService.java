@@ -1,7 +1,6 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.FireStation;
-import com.safetynet.alerts.repository.FireStationRepository;
 import com.safetynet.alerts.repository.IFireStationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,5 +38,10 @@ public class FireStationService implements IFireStationService {
     @Override
     public boolean delete(Map<String, String> stationId) {
         return repository.delete(stationId);
+    }
+
+    @Override
+    public Optional<List<FireStation>> findAll() {
+        return repository.findAll();
     }
 }

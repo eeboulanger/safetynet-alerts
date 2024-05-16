@@ -6,6 +6,7 @@ import com.safetynet.alerts.util.FireStationJsonDataEditor;
 import com.safetynet.alerts.util.IJsonDataEditor;
 import com.safetynet.alerts.util.IJsonDataReader;
 import com.safetynet.alerts.util.JsonDataReaderFromFile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,8 +17,10 @@ import java.util.stream.Collectors;
 @Repository
 public class FireStationRepository implements IFireStationRepository {
 
-    private final IJsonDataReader reader = new JsonDataReaderFromFile();
-    private final IJsonDataEditor<FireStation> editor = new FireStationJsonDataEditor();
+    @Autowired
+    private IJsonDataReader reader;
+    @Autowired
+    private IJsonDataEditor<FireStation> editor;
 
     @Override
     public boolean create(FireStation fireStation) {

@@ -1,27 +1,51 @@
 package com.safetynet.alerts.model;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+class PersonTest {
 
-public class PersonTest {
-
-    private static Person person;
-    @BeforeAll
-    public static void setUp(){
-         person = new Person("Paul", "Bloom", "123 Street", "NoWhereCity", 12345, "111-222-3344", "my@gmail.com");
-    }
     @Test
-    public void getPersonInfoTest(){
+    void testConstructorAndFieldAccess() {
+        // Arrange
+        String firstName = "John";
+        String lastName = "Doe";
+        String address = "123 Main Street";
+        String city = "Anytown";
+        int zip = 12345;
+        String phone = "555-1234";
+        String email = "john.doe@example.com";
 
-        assertEquals("Paul", person.getFirstName());
-        assertEquals("Bloom", person.getLastName());
-        assertEquals("123 Street", person.getAddress());
-        assertEquals("NoWhereCity", person.getCity());
-        assertEquals(12345, person.getZip());
-        assertEquals("111-222-3344", person.getPhone());
-        assertEquals("my@gmail.com", person.getEmail());
+        // Act
+        Person person = new Person(firstName, lastName, address, city, zip, phone, email);
+
+        // Assert
+        assertEquals(firstName, person.getFirstName(), "First name should match the constructor argument.");
+        assertEquals(lastName, person.getLastName(), "Last name should match the constructor argument.");
+        assertEquals(address, person.getAddress(), "Address should match the constructor argument.");
+        assertEquals(city, person.getCity(), "City should match the constructor argument.");
+        assertEquals(zip, person.getZip(), "Zip code should match the constructor argument.");
+        assertEquals(phone, person.getPhone(), "Phone number should match the constructor argument.");
+        assertEquals(email, person.getEmail(), "Email should match the constructor argument.");
     }
 
+    @Test
+    void testEquality() {
+        // Arrange
+        Person person1 = new Person("John", "Doe", "123 Main Street", "Anytown", 12345, "555-1234", "john.doe@example.com");
+        Person person2 = new Person("John", "Doe", "123 Main Street", "Anytown", 12345, "555-1234", "john.doe@example.com");
+
+        // Act & Assert
+        assertEquals(person1, person2, "Two instances with the same values should be equal.");
+    }
+
+    @Test
+    void testHashCode() {
+        // Arrange
+        Person person1 = new Person("John", "Doe", "123 Main Street", "Anytown", 12345, "555-1234", "john.doe@example.com");
+        Person person2 = new Person("John", "Doe", "123 Main Street", "Anytown", 12345, "555-1234", "john.doe@example.com");
+
+        // Act & Assert
+        assertEquals(person1.hashCode(), person2.hashCode(), "Hash codes should be equal for equal objects.");
+    }
 }

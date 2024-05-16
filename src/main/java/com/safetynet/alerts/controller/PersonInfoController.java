@@ -1,9 +1,7 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,8 +12,7 @@ public class PersonInfoController {
     private ICommunityService communityService;
 
     @GetMapping("/personInfo")
-    public ResponseEntity<?> findAllHouseHoldsCoveredByStations(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
-        List<PersonInfoDTO> personInfo = communityService.getAllPersonsByName(firstName, lastName);
-        return ResponseEntity.ok(personInfo);
+    public List<?> findAllHouseHoldsCoveredByStations(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+        return communityService.getAllPersonsByName(firstName, lastName);
     }
 }

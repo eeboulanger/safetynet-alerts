@@ -1,7 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.FireStation;
-import com.safetynet.alerts.service.FireStationService;
+import com.safetynet.alerts.service.IFireStationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 public class FireStationController {
     @Autowired
-    private FireStationService fireStationService;
+    private IFireStationService fireStationService;
 
     @PostMapping("/firestation")
     public String createFireStation(@RequestBody FireStation fireStation) {

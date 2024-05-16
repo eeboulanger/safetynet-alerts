@@ -1,25 +1,42 @@
 package com.safetynet.alerts.model;
 
 import org.junit.jupiter.api.Test;
-
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class MedicalRecordTest {
+class MedicalRecordTest {
 
     @Test
-    public void getMedicalRecordInfoTest() {
+    void testConstructorAndFieldAccess() {
+        String firstName = "John";
+        String lastName = "Doe";
+        String birthdate = "01/01/1980";
+        List<String> medications = Arrays.asList("med1", "med2");
+        List<String> allergies = Arrays.asList("pollen", "nuts");
 
-        List<String> medications = Arrays.asList("aznol:350mg", "hydrapermazol:100mg");
-        List<String> allergies = Arrays.asList("nillacilan");
-        MedicalRecord record = new MedicalRecord("Paul", "Bloom", "03/06/1984", medications, allergies);
+        MedicalRecord medicalRecord = new MedicalRecord(firstName, lastName, birthdate, medications, allergies);
 
-        assertEquals("Paul", record.getFirstName());
-        assertEquals("Bloom", record.getLastName());
-        assertEquals("03/06/1984", record.getBirthdate());
-        assertEquals(medications, record.getMedications());
-        assertEquals(allergies, record.getAllergies());
+        assertEquals(firstName, medicalRecord.getFirstName());
+        assertEquals(lastName, medicalRecord.getLastName());
+        assertEquals(birthdate, medicalRecord.getBirthdate());
+        assertIterableEquals(medications, medicalRecord.getMedications());
+        assertIterableEquals(allergies, medicalRecord.getAllergies());
+    }
+
+    @Test
+    void testEquality() {
+        MedicalRecord medicalRecord1 = new MedicalRecord("John", "Doe", "01/01/1980", List.of("med1"), List.of("pollen"));
+        MedicalRecord medicalRecord2 = new MedicalRecord("John", "Doe", "01/01/1980", List.of("med1"), List.of("pollen"));
+
+        assertEquals(medicalRecord1, medicalRecord2);
+    }
+
+    @Test
+    void testHashCode() {
+        MedicalRecord medicalRecord1 = new MedicalRecord("John", "Doe", "01/01/1980", List.of("med1"), List.of("pollen"));
+        MedicalRecord medicalRecord2 = new MedicalRecord("John", "Doe", "01/01/1980", List.of("med1"), List.of("pollen"));
+
+        assertEquals(medicalRecord1.hashCode(), medicalRecord2.hashCode(), "Hash codes should be equal for equal objects.");
     }
 }

@@ -23,6 +23,17 @@ public class FireAndFloodService implements IFireAndFloodService {
     private IFireStationService fireStationService;
     @Autowired
     private IMedicalRecordService medicalRecordService;
+    @Override
+    public FireDTO findPersonsAndFireStation(String address) {
+
+        List<Person> persons = findAllPersonsAtAddress(address);
+        List<MedicalRecord> records = findMedicalRecord(persons);
+        List<PersonMedicalInfo> personMedicalInfoList = convertToRecordInfoList(persons, records);
+
+        int fireStationNumber = findFireStation(address);
+
+        return new FireDTO(personMedicalInfoList, fireStationNumber);
+    }
 
     @Override
     public List<FloodDTO> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {
@@ -43,29 +54,37 @@ public class FireAndFloodService implements IFireAndFloodService {
                 for (String address : addresses) {
                     List<Person> personList = findAllPersonsAtAddress(address);
                     List<MedicalRecord> recordList = findMedicalRecord(personList);
-                    List<PersonMedicalInfo> medicalInfoList = convertToRecordInfoList(personList, recordList);
+                    List<PersonMedicalInfo> recordInfoList = convertToRecordInfoList(personList, recordList);
 
-                    FloodDTO floodDTO = new FloodDTO(stationNumber, address, medicalInfoList);
+                    FloodDTO floodDTO = new FloodDTO(stationNumber, address, recordInfoList);
                     floodDTOList.add(floodDTO);
                 }
             }
         }
         return floodDTOList;
     }
-
-
-    @Override
-    public FireDTO findPersonsAndFireStation(String address) {
-
-        List<Person> persons = findAllPersonsAtAddress(address);
-        List<MedicalRecord> records = findMedicalRecord(persons);
-        List<PersonMedicalInfo> personMedicalInfoList = convertToRecordInfoList(persons, records);
-
-        int fireStationNumber = findFireStation(address);
-
-        return new FireDTO(personMedicalInfoList, fireStationNumber);
+    /**
+     * Find fire station number by address
+     *
+     * @param address used for search
+     * @return number
+     */
+    public int findFireStation(String address) {
+        return fireStationService.findStationByAddress(address)
+                .map(FireStation::getStation)
+                .orElse(0);
     }
-
+    /**
+     * Finds all persons at a given address
+     *
+     * @param address used for searching
+     * @return a list of persons
+     */
+    public List<Person> findAllPersonsAtAddress(String address) {
+        return personService.findByAddress(address).stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
     /**
      * Finds medical information for each person in a given list
      *
@@ -79,19 +98,6 @@ public class FireAndFloodService implements IFireAndFloodService {
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }
-
-    /**
-     * Finds all persons at a given address
-     *
-     * @param address used for searching
-     * @return a list of persons
-     */
-    public List<Person> findAllPersonsAtAddress(String address) {
-        return personService.findByAddress(address).stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
-
     /**
      * Converts information of persons into a list of record info containing firstname, lastname, phonenumber, age, list of medications, list of allergies
      *
@@ -115,17 +121,5 @@ public class FireAndFloodService implements IFireAndFloodService {
                         record.getAllergies()
                 ))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Find fire station number by address
-     *
-     * @param address used for search
-     * @return number
-     */
-    public int findFireStation(String address) {
-        return fireStationService.findStationByAddress(address)
-                .map(FireStation::getStation)
-                .orElse(0);
     }
 }

@@ -1,115 +1,208 @@
 package com.safetynet.alerts.util;
 
-import com.safetynet.alerts.DataPrepareService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.safetynet.alerts.model.DataContainer;
+import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.MedicalRecord;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class MedicalRecordJsonDataEditorTest {
-    private final MedicalRecordJsonDataEditor editor = new MedicalRecordJsonDataEditor();
-    private DataPrepareService dataPrepareService;
 
-    @BeforeEach
-    public void setUp() {
-        dataPrepareService = new DataPrepareService();
+    @Mock
+    private ObjectMapper mapper;
+    @Mock
+    private ObjectWriter objectWriter;
+    private static DataContainer dataContainer;
+    private static MedicalRecord record;
+    @InjectMocks
+    private MedicalRecordJsonDataEditor editor;
+
+    @BeforeAll
+    public static void setUpForAll() {
+        //initialize data for testing
+        dataContainer = new DataContainer();
+        record = new MedicalRecord("FirstName", "LastName", "birthdate",
+                new ArrayList<>(), new ArrayList<>());
+        List<MedicalRecord> list = new ArrayList<>();
+        list.add(record);
+        dataContainer.setMedicalrecords(list);
     }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        dataPrepareService.resetData();
+    @Nested
+    public class SuccessfulEditingTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenReturn(dataContainer);
+            when(mapper.writerWithDefaultPrettyPrinter()).thenReturn(objectWriter);
+            doNothing().when(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
+
+        @Test
+        public void createMedicalRecordTest() throws IOException {
+            MedicalRecord medicalRecord = new MedicalRecord("New name", "new lastname", "", null, null);
+
+            boolean isCreated = editor.create(medicalRecord);
+
+            assertTrue(isCreated);
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            verify(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
+
+        @Test
+        public void updateMedicalRecordTest() throws IOException {
+            boolean isUpdated = editor.update(record);
+
+            assertTrue(isUpdated);
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            verify(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
+
+        @Test
+        public void deleteMedicalRecordTest() throws IOException {
+            boolean isDeleted = editor.delete(Map.of(
+                    "firstname", record.getFirstName(),
+                    "lastname", record.getLastName())
+            );
+
+            assertTrue(isDeleted);
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            verify(objectWriter).writeValue(any(File.class), eq(dataContainer));
+        }
     }
 
-    @Test
-    public void createMedicalRecordTest() throws IOException {
-        MedicalRecord record = new MedicalRecord(
-                "New person",
-                "lastname",
-                "01/01/1950",
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
-        int initialNumberOfRecords = dataPrepareService.getMedicalRecordsList().size();
+    @Nested
+    public class EditingFailsTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenReturn(dataContainer);
+        }
 
-        boolean isCreated = editor.create(record);
+        @Test
+        @DisplayName("Create record when a record with the same name exists should fail")
+        public void createMedicalRecord_whenAlreadyExists_shouldFail() {
 
-        assertTrue(isCreated);
-        assertEquals(initialNumberOfRecords + 1, dataPrepareService.getData().getMedicalrecords().size());
+            boolean result = editor.create(record); //medical record exists already
+
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Update when no record with the name exists should fail")
+        public void updateMedicalRecord_whenNoRecordExists_shouldFail() {
+            MedicalRecord medicalRecord = new MedicalRecord("No such name", "test", null, null, null);
+            boolean result = editor.update(medicalRecord); //no medical record exists
+
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Delete when no record with the name exists should fail")
+        public void deleteMedicalRecord_whenNoRecordExists_shouldFail() {
+            MedicalRecord medicalRecord = new MedicalRecord("No such name", "test", null, null, null);
+            boolean result = editor.delete(Map.of(
+                    "firstname", medicalRecord.getFirstName(),
+                    "lastname", medicalRecord.getLastName())
+            );
+
+            assertFalse(result);
+        }
+
     }
 
-    @Test
-    @DisplayName("Given there is already a medical record with the same name, then create should fail")
-    public void createMedicalRecordFailsTest() throws IOException {
-        MedicalRecord record = dataPrepareService.getMedicalRecord(0);
-        int initialNumberOfRecords = dataPrepareService.getMedicalRecordsList().size();
+    @Nested
+    public class ReadValueFailsTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenThrow(IOException.class);
+        }
 
-        boolean isCreated = editor.create(record);
+        @Test
+        @DisplayName("Create record when unable to read data should fail")
+        public void createRecord_whenFailsToReadData_shouldFail() throws IOException {
+            boolean result = editor.create(record);
 
-        assertFalse(isCreated);
-        assertEquals(initialNumberOfRecords, dataPrepareService.getData().getMedicalrecords().size());
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Update when unable to read data should fail")
+        public void updateRecord_whenFailsToReadData_shouldFail() throws IOException {
+
+            boolean result = editor.update(record);
+
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("Delete when unable to read data should fail")
+        public void deleteRecord_whenFailsToReadData_shouldFail() throws IOException {
+
+            boolean result = editor.delete(Map.of(
+                    "firstname", record.getFirstName(),
+                    "lastname", record.getLastName()));
+
+            verify(mapper).readValue(any(File.class), eq(DataContainer.class));
+            assertFalse(result);
+        }
     }
 
-    @Test
-    public void updateMedicalRecordTest() throws IOException {
-        MedicalRecord record = dataPrepareService.getMedicalRecord(1);
-        record.setBirthdate("01/01/1999");
 
-        boolean isUpdated = editor.update(record);
+    @Nested
+    public class WriteValueFailsTests {
+        @BeforeEach
+        public void setUp() throws IOException {
+            when(mapper.readValue(any(File.class), eq(DataContainer.class))).thenReturn(dataContainer);
+            when(mapper.writerWithDefaultPrettyPrinter()).thenReturn(objectWriter);
+            doThrow(IOException.class).when(objectWriter).writeValue(any(File.class), eq(dataContainer));
 
-        MedicalRecord result = dataPrepareService.getData().getMedicalrecords().get(1);
-        assertTrue(isUpdated);
-        assertEquals("01/01/1999", result.getBirthdate());
-    }
+        }
 
-    @Test
-    @DisplayName("Given there is no record with the given name, then update should fail")
-    public void updateMedicalRecordFailsTest() {
-        MedicalRecord record = new MedicalRecord(
-                "No such name",
-                "lastname",
-                "",
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
+        @Test
+        @DisplayName("Create when unable to write data should fail")
+        public void createFireStation_whenFailsToWriteData_shouldFail() {
+            MedicalRecord newRecord = new MedicalRecord("firstname", "lastname", null, null, null);
+            boolean result = editor.create(newRecord);
 
-        boolean isUpdated = editor.update(record);
+            assertFalse(result);
+        }
 
-        assertFalse(isUpdated);
-    }
+        @Test
+        @DisplayName("Update when unable to write data should fail")
+        public void updateFireStation_whenFailsToWriteData_shouldFail() {
+            boolean result = editor.update(record);
 
-    @Test
-    public void deleteMedicalRecordTest() throws IOException {
-        MedicalRecord record = dataPrepareService.getMedicalRecord(0);
-        int initialNumberOfRecords = dataPrepareService.getMedicalRecordsList().size();
+            assertFalse(result);
+        }
 
-        boolean isDeleted = editor.delete(Map.of(
-                "firstname", record.getFirstName(),
-                "lastname", record.getLastName()
-        ));
+        @Test
+        @DisplayName("Delete fire station when unable to write data should fail")
+        public void deleteFireStation_whenFailsToWriteData_shouldFail() {
 
-        assertTrue(isDeleted);
-        assertEquals(initialNumberOfRecords - 1, dataPrepareService.getData().getMedicalrecords().size());
-    }
+            boolean result = editor.delete(Map.of(
+                    "firstname", record.getFirstName(),
+                    "lastname", record.getLastName()));
 
-    @Test
-    @DisplayName("Given there is no such record, then delete should fail")
-    public void deleteMedicalRecordFailsTest() throws IOException {
-        int initialNumberOfRecords = dataPrepareService.getMedicalRecordsList().size();
-
-        boolean isDeleted = editor.delete(Map.of(
-                        "firstname", "no such name",
-                        "lastname", "test"
-                )
-        );
-
-        assertFalse(isDeleted);
-        assertEquals(initialNumberOfRecords, dataPrepareService.getData().getMedicalrecords().size());
+            assertFalse(result);
+        }
     }
 }

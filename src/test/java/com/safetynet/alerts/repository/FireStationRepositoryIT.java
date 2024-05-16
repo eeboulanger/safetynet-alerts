@@ -5,6 +5,8 @@ import com.safetynet.alerts.model.FireStation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,8 +16,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class FireStationRepositoryIT {
-    private final FireStationRepository repository = new FireStationRepository();
+    @Autowired
+    private FireStationRepository repository;
     private DataPrepareService dataPrepareService;
 
     @BeforeEach
@@ -30,6 +34,7 @@ public class FireStationRepositoryIT {
     @Test
     public void deleteFireStationTest() {
         FireStation station = dataPrepareService.getFireStation(0);
+        System.out.println("station " +station.getAddress() + " " + station.getStation());
         boolean isDeleted = repository.delete(Map.of(
                 "address", station.getAddress(),
                 "station", String.valueOf(station.getStation())

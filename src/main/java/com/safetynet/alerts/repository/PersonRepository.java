@@ -6,6 +6,7 @@ import com.safetynet.alerts.util.IJsonDataEditor;
 import com.safetynet.alerts.util.IJsonDataReader;
 import com.safetynet.alerts.util.JsonDataReaderFromFile;
 import com.safetynet.alerts.util.PersonJsonDataEditor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,8 +17,10 @@ import java.util.stream.Collectors;
 @Repository
 public class PersonRepository implements IPersonRepository {
 
-    IJsonDataReader reader = new JsonDataReaderFromFile();
-    IJsonDataEditor<Person> editor = new PersonJsonDataEditor();
+    @Autowired
+    IJsonDataReader reader;
+    @Autowired
+    IJsonDataEditor<Person> editor;
 
     @Override
     public Optional<List<Person>> findAll() {

@@ -2,19 +2,14 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.MedicalRecord;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-public interface IMedicalRecordService {
+/**
+ * Any service that handles medical record crud queries
+ */
 
-    Optional<List<MedicalRecord>> findAll();
+public interface IMedicalRecordService extends ICrudService<MedicalRecord> {
 
     Optional<MedicalRecord> findByName(String firstname, String lastname);
 
-    boolean create(MedicalRecord record);
-
-    boolean update(MedicalRecord record);
-
-    boolean delete(Map<String, String> recordId);
 }

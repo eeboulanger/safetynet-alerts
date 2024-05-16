@@ -1,6 +1,5 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.dto.FloodDTO;
 import com.safetynet.alerts.service.IFireAndFloodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +14,7 @@ public class FloodController {
     private IFireAndFloodService fireAndFloodService;
 
     @GetMapping("/flood/stations")
-    public List<FloodDTO> findAllHouseHoldsCoveredByStations(@RequestParam("stations") List<Integer> listOfFireStations) {
+    public List<?> findAllHouseHoldsCoveredByStations(@RequestParam("stations") List<Integer> listOfFireStations) {
         return fireAndFloodService.findAllHouseHoldsCoveredByStations(listOfFireStations);
     }
 }

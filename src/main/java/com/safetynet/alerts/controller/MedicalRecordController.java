@@ -1,7 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.MedicalRecord;
-import com.safetynet.alerts.service.MedicalRecordService;
+import com.safetynet.alerts.service.IMedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 public class MedicalRecordController {
     @Autowired
-    private MedicalRecordService recordService;
+    private IMedicalRecordService recordService;
 
     @PostMapping("/medicalRecord")
     public String createMedicalRecord(@RequestBody MedicalRecord record) {
