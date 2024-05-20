@@ -1,5 +1,7 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.config.DataInitializer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class PhoneAlertServiceIT {
-
     @Autowired
     private PhoneAlertService service;
+    @Autowired
+    private DataInitializer dataInitializer;
+
+    @BeforeEach
+    public void setUp() {
+        dataInitializer.run();
+    }
 
     @Test
     @DisplayName("Given there are households covered, when search by firestation number then return list of phone numbers")

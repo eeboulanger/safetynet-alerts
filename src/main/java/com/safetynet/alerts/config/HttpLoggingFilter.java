@@ -18,19 +18,28 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
-        logRequest(request);
-        filterChain.doFilter(request, responseWrapper);
-        logResponse(responseWrapper);
+        if (!request.getRequestURI().startsWith("/actuator")) {
+            logRequest(request);
+            filterChain.doFilter(request, responseWrapper);
+            logResponse(responseWrapper);
+        } else {
+            filterChain.doFilter(request, responseWrapper);
+            responseWrapper.copyBodyToResponse();
+        }
     }
 
     private void logRequest(HttpServletRequest request) {
         String fullUri = request.getRequestURI() + (request.getQueryString() != null ?
                 "?" + request.getQueryString() : "");
-        logger.info("Request {}", fullUri);
+        logger.info(request.getMethod() + " Request: {}", fullUri);
     }
 
     private void logResponse(ContentCachingResponseWrapper responseWrapper) throws IOException {
-        logger.info("Response {}", new String(responseWrapper.getContentAsByteArray()));
+        if (responseWrapper.getStatus() >= 400) {
+            logger.error("Status: " + responseWrapper.getStatus() + " Response: {}", new String(responseWrapper.getContentAsByteArray()));
+        } else {
+            logger.info("Status: " + responseWrapper.getStatus() + " Response: {}", new String(responseWrapper.getContentAsByteArray()));
+        }
         responseWrapper.copyBodyToResponse();
     }
 }

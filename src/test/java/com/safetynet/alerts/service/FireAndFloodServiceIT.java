@@ -1,10 +1,12 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.config.DataInitializer;
 import com.safetynet.alerts.dto.FireDTO;
 import com.safetynet.alerts.dto.FloodDTO;
 import com.safetynet.alerts.dto.PersonMedicalInfo;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,13 @@ public class FireAndFloodServiceIT {
 
     @Autowired
     private FireAndFloodService fireService;
+    @Autowired
+    private DataInitializer dataInitializer;
+
+    @BeforeEach
+    public void setUp() {
+        dataInitializer.run();
+    }
 
     @Test
     @DisplayName("Given there are persons covered when entering address then return list of persons and fire station number")
@@ -33,9 +42,6 @@ public class FireAndFloodServiceIT {
         );
 
         FireDTO result = fireService.findPersonsAndFireStation("892 Downing Ct");
-        List<String> firstNames = result.getPersons().stream()
-                .map(PersonMedicalInfo::getFirstName)
-                .toList();
 
         assertEquals(3, result.getPersons().size());
         assertTrue(result.getPersons().containsAll(persons));
@@ -43,8 +49,8 @@ public class FireAndFloodServiceIT {
 
     @Test
     @DisplayName("Find persons covered by stations should return list of fire staiton numbers, address and list of medical information of persons covered ")
-    public void findAllHouseHoldsCoveredByStations(){
-        List<Integer> stations = List.of(1,2);
+    public void findAllHouseHoldsCoveredByStations() {
+        List<Integer> stations = List.of(1, 2);
 
         List<FloodDTO> result = fireService.findAllHouseHoldsCoveredByStations(stations);
 

@@ -23,7 +23,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given there's a firestation when entering number then return list of persons and count adults/children")
     public void givenFireStation_whenEnteringNumber_thenReturnList() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/firestation?stationNumber={station_number}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.get("/firestation")
+                        .param("stationNumber", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -40,7 +41,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given there's no firestation with the given number, then return empty Json")
     public void givenNoFireStation_whenEnteringNumber_thenReturnEmptyJson() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/firestation?stationNumber={station_number}", -1)
+        mockMvc.perform(MockMvcRequestBuilders.get("/firestation")
+                        .param("stationNumber", "-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -51,7 +53,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given the address is covered, when searching by address, then return list of children")
     public void givenCoveredAddress_whenEnteringAddress_thenReturnListOfChildren() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/childAlert?address={address}", "1509 Culver St")
+        mockMvc.perform(MockMvcRequestBuilders.get("/childAlert")
+                        .param("address", "1509 Culver St")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -61,10 +64,23 @@ public class SafetyNetAlertsIT {
     }
 
     @Test
+    @DisplayName("Given the address is not covered, when searching by address, then return empty list of children")
+    public void givenNoCoveredAddress_whenEnteringAddress_thenReturnEmptyListOfChildren() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/childAlert")
+                        .param("address", "Not covered")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
     @DisplayName("Given there are households covered, when searching by firestation number, then return list of unique phone numbers")
     public void givenCoveredHouseholds_whenEnteringStationNumber_thenReturnListOfPhoneNumbers() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/phoneAlert?firestation={station_number}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.get("/phoneAlert")
+                        .param("firestation", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -73,10 +89,23 @@ public class SafetyNetAlertsIT {
     }
 
     @Test
+    @DisplayName("Given there are no households covered, when searching by firestation number, then return empty list of unique phone numbers")
+    public void givenNoCoveredHouseholds_whenEnteringStationNumber_thenReturnEmptyListOfPhoneNumbers() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/phoneAlert")
+                        .param("firestation", "-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
     @DisplayName("Given there are persons covered, when searching by address, then return list of persons and fire station number")
     public void givenCoveredHouseholds_whenEnteringAddress_thenReturnListOfPersonsAndFireStationNumber() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/fire?address={address}", "951 LoneTree Rd")
+        mockMvc.perform(MockMvcRequestBuilders.get("/fire")
+                        .param("address", "951 LoneTree Rd")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -92,7 +121,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given there are no persons covered, when searching by address, then return empty list")
     public void givenNoCoveredPersons_whenEnteringAddress_thenReturnEmptyList() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/fire?address={address}", "address not covered")
+        mockMvc.perform(MockMvcRequestBuilders.get("/fire")
+                        .param("address", "address not covered")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -104,7 +134,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given there are persons covered, when searching by list of stations, then return station number address and list of persons with medical information")
     public void givenCoveredPersons_whenEnteringLisOfStations_thenReturnList() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/flood/stations?stations={listOfFireStationNumbers}", "1,2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/flood/stations")
+                        .param("stations", "1,2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -125,7 +156,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given there are no persons covered, when searching by station numbers, then return empty list")
     public void givenNoCoveredPersons_whenEnteringStationNumbers_thenReturnEmptyList() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/flood/stations?stations={listOfFireStationNumbers}", -1)
+        mockMvc.perform(MockMvcRequestBuilders.get("/flood/stations")
+                        .param("stations", "-1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -136,7 +168,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given there are persons, when searching by city, then return list of emails")
     public void givenCoveredPersons_whenEnteringCity_thenReturnList() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/communityEmail?city={city}", "Culver")
+        mockMvc.perform(MockMvcRequestBuilders.get("/communityEmail")
+                        .param("city", "Culver")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -147,7 +180,8 @@ public class SafetyNetAlertsIT {
     @DisplayName("Given there are no persons, when searching by city, then return empty list")
     public void givenNoCoveredPersons_whenEnteringCity_thenReturnEmptyList() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/communityEmail?city={city}", "No city")
+        mockMvc.perform(MockMvcRequestBuilders.get("/communityEmail")
+                        .param("city", "No city")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())

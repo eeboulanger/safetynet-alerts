@@ -1,38 +1,44 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.repository.PersonRepository;
+import com.safetynet.alerts.repository.IPersonRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PersonServiceTest {
-
     @Mock
-    private PersonRepository personRepository;
-
+    private IPersonRepository personRepository;
     @InjectMocks
-    private com.safetynet.alerts.service.PersonService personService;
+    private PersonService personService;
 
-    private final Person person = new Person();
-    private final List<Person> list = List.of(
-            new Person("Firstname", "Lastname", "address", "city", 123, "phone", "email")
-    );
-
+    private Person person;
+    private List<Person> list;
     private final Map<String, String> personId = new HashMap<>();
+
+    @BeforeEach
+    public void setUp() {
+        person = new Person(
+                "Anna",
+                "Yong",
+                "Glimart street",
+                "Ohio",
+                123,
+                "111-222-333",
+                "anna@yong.com");
+        list = new ArrayList<>();
+        list.add(person);
+    }
 
     @Test
     public void createNewPersonTest() {
@@ -72,28 +78,31 @@ public class PersonServiceTest {
 
         verify(personRepository).findAll();
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().size());
+        assertTrue(result.get().contains(person));
     }
 
     @Test
     public void findByAddressTest() {
-        when(personRepository.findByAddress("address")).thenReturn(Optional.of(list));
+        String address = person.getAddress();
+        when(personRepository.findByAddress(address)).thenReturn(Optional.of(list));
 
-        Optional<List<Person>> result = personService.findByAddress("address");
+        Optional<List<Person>> result = personService.findByAddress(address);
 
-        verify(personRepository).findByAddress("address");
+        verify(personRepository).findByAddress(address);
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().size());
+        assertTrue(result.get().contains(person));
     }
 
     @Test
     public void findByNameTest() {
-        when(personRepository.findByName("Firstname", "Lastname")).thenReturn(Optional.of(list));
+        String firstName= person.getFirstName();
+        String lastName = person.getLastName();
+        when(personRepository.findByName(firstName, lastName)).thenReturn(Optional.of(list));
 
-        Optional<List<Person>> result = personService.findByName("Firstname", "Lastname");
+        Optional<List<Person>> result = personService.findByName(firstName, lastName);
 
-        verify(personRepository).findByName("Firstname", "Lastname");
+        verify(personRepository).findByName(firstName, lastName);
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().size());
+        assertTrue(result.get().contains(person));
     }
 }

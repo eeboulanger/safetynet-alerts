@@ -3,7 +3,6 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.dto.ChildDTO;
 import com.safetynet.alerts.dto.PersonContactInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
-
 
 /**
  * Returns a list of Child info as dto, containing first name, last name, age and a list of family members
@@ -45,7 +43,7 @@ public class ChildAlertService implements IChildAlertService<ChildDTO> {
      *
      * @param lastName  of the child
      * @param address   of the child
-     * @param childName
+     * @param childName is the child's name
      * @return list of person info containing firstname last name address and phone of the family member
      */
     public List<PersonContactInfo> findFamilyMembers(String lastName, String address, String childName) {

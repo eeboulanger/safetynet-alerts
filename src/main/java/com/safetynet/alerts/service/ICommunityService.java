@@ -5,15 +5,15 @@ import com.safetynet.alerts.dto.PersonInfoDTO;
 import java.util.List;
 
 /**
- * Handles search for person information in community
+ * Any class that handles search for person information in community
  */
 public interface ICommunityService {
 
     /**
      * Finds all persons by name
      *
-     * @param firstName
-     * @param lastName
+     * @param firstName of the person
+     * @param lastName of the person
      * @return list of person information
      */
     List<PersonInfoDTO> getAllPersonsByName(String firstName, String lastName);

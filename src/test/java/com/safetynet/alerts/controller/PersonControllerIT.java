@@ -1,7 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.alerts.DataPrepareService;
+import com.safetynet.alerts.config.DataInitializer;
 import com.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,31 +11,42 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.IOException;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class PersonControllerIT {
-    private static DataPrepareService dataPrepareService;
     private static Person person;
+    private Person unexistingPerson;
     private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private DataInitializer dataInitializer;
 
-    @BeforeAll
-    public static void setUp() {
-        //Add test persons to json file
-        dataPrepareService = new DataPrepareService();
-        person = dataPrepareService.getPerson(0);
-    }
+    @BeforeEach
+    public void setUp() {
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        //delete all test persons
-        dataPrepareService.resetData();
+        dataInitializer.run();
+        unexistingPerson = new Person(
+                "No such person",
+                "test",
+                "1509 Culver St",
+                "Culver",
+                97451,
+                "000-111-6512",
+                "empty@email.com"
+        );
+        person = new Person(
+                "John",
+                "Boyd",
+                "1509 Culver St",
+                "Culver",
+                97451,
+                "841-874-6512",
+                "jaboyd@email.com"
+        );
     }
 
     @Test
@@ -95,11 +106,9 @@ public class PersonControllerIT {
     @Test
     @DisplayName("Given there is person with the name, then return successfully deleted message")
     public void deletePersonTest() throws Exception {
-        Person person1 = dataPrepareService.getPerson(1);
-
+        String requestBody = mapper.writeValueAsString(person);
         mockMvc.perform(MockMvcRequestBuilders.delete("/person")
-                        .param("firstName", person1.getFirstName())
-                        .param("lastName", person1.getLastName())
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -109,9 +118,9 @@ public class PersonControllerIT {
     @Test
     @DisplayName("Given there is no person with the name, then return failed to delete message")
     public void deletePerson_whenNoPerson_shouldFailTest() throws Exception {
+        String requestBody = mapper.writeValueAsString(unexistingPerson);
         mockMvc.perform(MockMvcRequestBuilders.delete("/person")
-                        .param("firstName", "No such name")
-                        .param("lastName", "Test")
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())

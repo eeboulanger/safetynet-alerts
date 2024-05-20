@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class EmailService implements IEmailService {
-
     @Autowired
     private IPersonService personService;
 

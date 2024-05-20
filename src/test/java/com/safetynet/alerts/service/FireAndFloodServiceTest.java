@@ -6,6 +6,7 @@ import com.safetynet.alerts.dto.PersonMedicalInfo;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.util.AgeCalculator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,73 +26,161 @@ import static org.mockito.Mockito.*;
 public class FireAndFloodServiceTest {
 
     @Mock
-    private PersonService personService;
+    private IPersonService personService;
     @Mock
-    private FireStationService fireStationService;
+    private IFireStationService fireStationService;
     @Mock
-    private MedicalRecordService recordService;
+    private IMedicalRecordService recordService;
     @InjectMocks
     private FireAndFloodService fireService;
 
     @Nested
     public class DtoTests {
         private List<FireStation> fireStationList;
+        private List<Person> personStation1;
+        private List<Person> personStation2;
+        private List<MedicalRecord> medicalRecordList;
+        private FireStation station1;
+        private FireStation station2;
+
+        private List<PersonMedicalInfo> expectedResultFireStation1;
+        private List<PersonMedicalInfo> expectedResultFireStation2;
 
         @BeforeEach
         public void setUp() {
+            //Simulate two fire stations with different numbers and addresses
             fireStationList = List.of(
-                    new FireStation("address", 1)
+                    new FireStation("Elm street", 11),
+                    new FireStation("Holmart street", 12)
             );
-            List<Person> personList = List.of(new Person(
-                            "Test firstname",
-                            "Test lastname",
-                            "address",
-                            "city",
+            //Persons covered by the first fire station
+            personStation1 = List.of(new Person(
+                            "Emma",
+                            "Yong",
+                            "Elm street",
+                            "Denver",
                             123,
-                            "phone",
-                            "mail"
+                            "1-22-333",
+                            "emmas@mail.com"
+                    ),
+                    new Person(
+                            "Camilla",
+                            "Yong",
+                            "Elm street",
+                            "Denver",
+                            123,
+                            "1-22-333",
+                            "emmas@mail.com"
+                    ));
+            //Persons covered by the second fire station
+            personStation2 = List.of(new Person(
+                            "Matthew",
+                            "Loyd",
+                            "Holmart street",
+                            "Denver",
+                            123,
+                            "1-22-343",
+                            "matthew@mail.com"
                     )
             );
-            MedicalRecord medicalRecord = new MedicalRecord(
-                    "Test firstname",
-                    "Test lastname",
-                    "01/01/1950",
-                    new ArrayList<>(),
-                    new ArrayList<>()
-
+            //Medical records for all covered persons
+            medicalRecordList = List.of(new MedicalRecord(
+                            "Emma",
+                            "Yong",
+                            "01/01/1950",
+                            new ArrayList<>(),
+                            new ArrayList<>()),
+                    new MedicalRecord(
+                            "Camilla",
+                            "Yong",
+                            "01/01/1990",
+                            new ArrayList<>(),
+                            new ArrayList<>()),
+                    new MedicalRecord(
+                            "Matthew",
+                            "Loyd",
+                            "01/01/1960",
+                            new ArrayList<>(),
+                            new ArrayList<>())
             );
 
-            when(personService.findByAddress("address")).thenReturn(Optional.of(personList));
-            when(recordService.findByName("Test firstname", "Test lastname")).thenReturn(Optional.of(medicalRecord));
+            station1 = fireStationList.get(0);
+            station2 = fireStationList.get(1);
 
+            when(personService.findByAddress(station1.getAddress()))
+                    .thenReturn(Optional.of(personStation1));
+            when(recordService.findByName(personStation1.get(0).getFirstName(), personStation1.get(0).getLastName()))
+                    .thenReturn(Optional.of(medicalRecordList.get(0)));
+            when(recordService.findByName(personStation1.get(1).getFirstName(), personStation1.get(1).getLastName()))
+                    .thenReturn(Optional.of(medicalRecordList.get(1)));
+
+
+            expectedResultFireStation1 = List.of(new PersonMedicalInfo(
+                            personStation1.get(0).getFirstName(),
+                            personStation1.get(0).getLastName(),
+                            personStation1.get(0).getPhone(),
+                            AgeCalculator.calculateAge(medicalRecordList.get(0).getBirthdate(), "DD/mm/yyyy"),
+                            medicalRecordList.get(0).getMedications(),
+                            medicalRecordList.get(0).getAllergies()
+                    ), new PersonMedicalInfo(
+                            personStation1.get(1).getFirstName(),
+                            personStation1.get(1).getLastName(),
+                            personStation1.get(1).getPhone(),
+                            AgeCalculator.calculateAge(medicalRecordList.get(1).getBirthdate(), "DD/mm/yyyy"),
+                            medicalRecordList.get(1).getMedications(),
+                            medicalRecordList.get(1).getAllergies()
+                    )
+            );
+            expectedResultFireStation2 = List.of(new PersonMedicalInfo(
+                            personStation2.get(0).getFirstName(),
+                            personStation2.get(0).getLastName(),
+                            personStation2.get(0).getPhone(),
+                            AgeCalculator.calculateAge(medicalRecordList.get(2).getBirthdate(), "DD/mm/yyyy"),
+                            medicalRecordList.get(2).getMedications(),
+                            medicalRecordList.get(2).getAllergies()
+                    )
+            );
         }
 
         @Test
         public void findAllHouseHoldsCoveredByStationsTest() {
-            when(fireStationService.findByStationNumber(1)).thenReturn(Optional.of(fireStationList));
+            when(fireStationService.findByStationNumber(station1.getStation()))
+                    .thenReturn(Optional.of(List.of(station1)));
+            when(fireStationService.findByStationNumber(station2.getStation()))
+                    .thenReturn(Optional.of(List.of(station2)));
+            when(personService.findByAddress(station2.getAddress()))
+                    .thenReturn(Optional.of(personStation2));
+            when(recordService.findByName(personStation2.get(0).getFirstName(), personStation2.get(0).getLastName()))
+                    .thenReturn(Optional.of(medicalRecordList.get(2)));
 
-            List<FloodDTO> result = fireService.findAllHouseHoldsCoveredByStations(List.of(1));
+            List<FloodDTO> result = fireService.findAllHouseHoldsCoveredByStations(List.of(station1.getStation(), station2.getStation()));
 
-            verify(fireStationService).findByStationNumber(1);
-            verify(personService).findByAddress("address");
-            verify(recordService).findByName("Test firstname", "Test lastname");
-            assertEquals(1, result.size());
+            verify(fireStationService).findByStationNumber(station1.getStation());
+            verify(fireStationService).findByStationNumber(station2.getStation());
+            verify(personService).findByAddress(station1.getAddress());
+            verify(personService).findByAddress(station2.getAddress());
+            verify(recordService).findByName(personStation1.get(0).getFirstName(), personStation1.get(0).getLastName());
+            verify(recordService).findByName(personStation1.get(1).getFirstName(), personStation1.get(1).getLastName());
+            verify(recordService).findByName(personStation2.get(0).getFirstName(), personStation2.get(0).getLastName());
+
+            assertEquals(2, result.size());
             assertEquals(fireStationList.get(0).getAddress(), result.get(0).getAddress());
             assertEquals(fireStationList.get(0).getStation(), result.get(0).getFirestationNumber());
-            assertEquals("Test firstname", result.get(0).getMedicalInfoList().get(0).getFirstName());
+            assertEquals(expectedResultFireStation1, result.get(0).getMedicalInfoList());
+            assertEquals(expectedResultFireStation2, result.get(1).getMedicalInfoList());
         }
 
         @Test
         public void findPersonsAndFireStationTest() {
-            FireStation station = fireStationList.get(0);
-            when(fireStationService.findStationByAddress("address")).thenReturn(Optional.of(station));
+            when(fireStationService.findStationByAddress(station1.getAddress())).thenReturn(Optional.of(station1));
+            FireDTO result = fireService.findPersonsAndFireStation(station1.getAddress());
 
-            FireDTO result = fireService.findPersonsAndFireStation("address");
-
-            verify(personService).findByAddress("address");
-            verify(recordService).findByName("Test firstname", "Test lastname");
-            verify(fireStationService).findStationByAddress("address");
-            assertEquals(1, result.getFirestation());
+            verify(personService).findByAddress(station1.getAddress());
+            verify(recordService).findByName(personStation1.get(0).getFirstName(), personStation1.get(0).getLastName());
+            verify(recordService).findByName(personStation1.get(1).getFirstName(), personStation1.get(1).getLastName());
+            assertNotNull(result);
+            assertEquals(station1.getStation(), result.getFirestation());
+            assertEquals(expectedResultFireStation1, result.getPersons());
         }
     }
 
@@ -102,8 +191,8 @@ public class FireAndFloodServiceTest {
         List<FloodDTO> result = fireService.findAllHouseHoldsCoveredByStations(List.of(1));
 
         verify(fireStationService).findByStationNumber(1);
-        verify(personService, never()).findByAddress("address");
-        verify(recordService, never()).findByName("Test firstname", "Test lastname");
+        verify(personService, never()).findByAddress(anyString());
+        verify(recordService, never()).findByName(anyString(), anyString());
         assertEquals(0, result.size());
     }
 
@@ -160,13 +249,33 @@ public class FireAndFloodServiceTest {
                 new Person("Jacob", "Boyd", "1509 Culver St", "Culver", 97451, "841-874-6512", "drk@email.com")
         );
         List<MedicalRecord> records = List.of(
-                new MedicalRecord("John", "Boyd", "03/06/1984", null, null),
-                new MedicalRecord("Jacob", "Boyd", "03/06/1984", null, null)
+                new MedicalRecord("John", "Boyd", "03/06/1984", List.of("100mg:Peratoxin"), List.of("peanuts")),
+                new MedicalRecord("Jacob", "Boyd", "03/06/1984", List.of("100mg:dioxin"), List.of("pollen"))
+        );
+
+        List<PersonMedicalInfo> expectedResults = List.of(
+                new PersonMedicalInfo(
+                        records.get(0).getFirstName(),
+                        records.get(0).getLastName(),
+                        personList.get(0).getPhone(),
+                        AgeCalculator.calculateAge(records.get(0).getBirthdate(), "DD/mm/yyyy"),
+                        records.get(0).getMedications(),
+                        records.get(0).getAllergies()
+                ),
+                new PersonMedicalInfo(
+                        records.get(1).getFirstName(),
+                        records.get(1).getLastName(),
+                        personList.get(1).getPhone(),
+                        AgeCalculator.calculateAge(records.get(1).getBirthdate(), "DD/mm/yyyy"),
+                        records.get(1).getMedications(),
+                        records.get(1).getAllergies()
+                )
         );
 
         List<PersonMedicalInfo> result = fireService.convertToRecordInfoList(personList, records);
 
         assertEquals(2, result.size());
+        assertEquals(expectedResults, result);
     }
 
     @Test

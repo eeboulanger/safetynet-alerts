@@ -26,10 +26,10 @@ public class PersonController {
     }
 
     @DeleteMapping("/person")
-    public String deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
+    public String deletePerson(@RequestBody Person person) {
         boolean isDeleted = personService.delete(Map.of(
-                "firstName", firstName,
-                "lastName", lastName
+                "firstName", person.getFirstName(),
+                "lastName", person.getLastName()
         ));
         return isDeleted ? "Person has been successfully deleted" : "Deleting person has failed";
 

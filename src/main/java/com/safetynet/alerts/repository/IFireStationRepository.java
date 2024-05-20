@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Any class that handled queries to read and edit Fire station data
+ * Any class that handles queries to read and edit Fire station data
  */
 public interface IFireStationRepository extends ICrudRepository<FireStation> {
     Optional<List<FireStation>> findByStationNumber(int number);

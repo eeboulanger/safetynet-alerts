@@ -5,7 +5,7 @@ import com.safetynet.alerts.model.MedicalRecord;
 import java.util.Optional;
 
 /**
- * Any service that handles medical record crud queries
+ * Any service that handles retrieval and updating operations on medical record
  */
 
 public interface IMedicalRecordService extends ICrudService<MedicalRecord> {

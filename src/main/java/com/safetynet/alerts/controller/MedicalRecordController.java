@@ -25,8 +25,8 @@ public class MedicalRecordController {
     @DeleteMapping("/medicalRecord")
     public String deleteMedicalRecord(@RequestBody MedicalRecord record) {
         return recordService.delete(Map.of(
-                        "firstname", record.getFirstName(),
-                        "lastname", record.getLastName()
+                        "firstName", record.getFirstName(),
+                        "lastName", record.getLastName()
                 )
         ) ? "Medical record has been successfully deleted" : "Deleting medical record has failed";
     }

@@ -19,10 +19,8 @@ import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class EmailServiceTest {
-
     @Mock
-    private PersonService personService;
-
+    private IPersonService personService;
     @InjectMocks
     private EmailService emailService;
 

@@ -1,9 +1,8 @@
 package com.safetynet.alerts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.alerts.DataPrepareService;
+import com.safetynet.alerts.config.DataInitializer;
 import com.safetynet.alerts.model.FireStation;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.IOException;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,18 +22,17 @@ public class FireStationControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private DataInitializer dataInitializer;
     private final ObjectMapper mapper = new ObjectMapper();
-    private DataPrepareService dataPrepareService;
+    private FireStation station;
 
     @BeforeEach
     public void setUp() {
-        dataPrepareService = new DataPrepareService();
+        dataInitializer.run();
+        station = new FireStation("1509 Culver St", 3);
     }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        dataPrepareService.resetData();
-    }
 
     @Test
     public void createFireStationTest() throws Exception {
@@ -53,7 +49,6 @@ public class FireStationControllerIT {
     @Test
     @DisplayName("Given the fire station already exists, then creating new fire station should fail ")
     public void createFireStationFailsTest() throws Exception {
-        FireStation station = dataPrepareService.getFireStation(0);
         String requestBody = mapper.writeValueAsString(station);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/firestation")
@@ -65,7 +60,6 @@ public class FireStationControllerIT {
 
     @Test
     public void updateFireStationTest() throws Exception {
-        FireStation station = dataPrepareService.getFireStation(0);
         String requestBody = mapper.writeValueAsString(station);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/firestation")
@@ -90,7 +84,6 @@ public class FireStationControllerIT {
 
     @Test
     public void deleteFireStationTest() throws Exception {
-        FireStation station = dataPrepareService.getFireStation(1);
         String requestBody = mapper.writeValueAsString(station);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/firestation")

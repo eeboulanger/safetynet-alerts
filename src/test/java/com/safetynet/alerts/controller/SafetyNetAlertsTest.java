@@ -37,33 +37,39 @@ public class SafetyNetAlertsTest {
 
     @Test
     public void getListOfChildrenTest() throws Exception {
-        when(childAlertService.findAllChildren("Some address")).thenReturn(new ArrayList<>());
+        String address = "Rue des fleurs";
+        when(childAlertService.findAllChildren(address)).thenReturn(new ArrayList<>());
+
         mockMvc.perform(get("/childAlert")
-                        .param("address", "Some address"))
+                        .param("address", address))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(childAlertService).findAllChildren("Some address");
+        verify(childAlertService).findAllChildren(address);
     }
 
     @Test
     public void getListOfEmailsTest() throws Exception {
-        when(emailService.getAllEmails("Some city")).thenReturn(new HashSet<>());
+        String city = "Denver";
+        when(emailService.getAllEmails(city)).thenReturn(new HashSet<>());
 
         mockMvc.perform(get("/communityEmail")
-                        .param("city", "Some city"))
+                        .param("city", city))
                 .andExpect(status().is2xxSuccessful());
+
+        verify(emailService).getAllEmails(city);
     }
 
     @Test
     public void getFireDtoTest() throws Exception {
+        String address = "Rue des fleurs";
         FireDTO fireDTO = new FireDTO(new ArrayList<>(), 1);
-        when(fireAndFloodService.findPersonsAndFireStation("Some address")).thenReturn(fireDTO);
+        when(fireAndFloodService.findPersonsAndFireStation(address)).thenReturn(fireDTO);
 
         mockMvc.perform(get("/fire")
-                        .param("address", "Some address"))
+                        .param("address", address))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(fireAndFloodService).findPersonsAndFireStation("Some address");
+        verify(fireAndFloodService).findPersonsAndFireStation(address);
     }
 
     @Test
@@ -74,6 +80,7 @@ public class SafetyNetAlertsTest {
         mockMvc.perform(get("/firestation", 1)
                         .param("stationNumber", "1"))
                 .andExpect(status().is2xxSuccessful());
+
         verify(fireStationCoverageService).findPersonsCoveredByFireStation(1);
     }
 
@@ -82,24 +89,28 @@ public class SafetyNetAlertsTest {
         FloodDTO result = new FloodDTO(1, "Some address", new ArrayList<>());
         List<FloodDTO> floodDTOList = List.of(result);
         when(fireAndFloodService.findAllHouseHoldsCoveredByStations(List.of(1))).thenReturn(floodDTOList);
+
         mockMvc.perform(get("/flood/stations")
                         .param("stations", "1"))
                 .andExpect(status().is2xxSuccessful());
+
         verify(fireAndFloodService).findAllHouseHoldsCoveredByStations(List.of(1));
     }
 
     @Test
     public void getPersonInfoTest() throws Exception {
-        List<PersonInfoDTO> result = List.of(new PersonInfoDTO("Firstname", "Lastname", "email",
+        String firstName = "Maya";
+        String lastName = "Loyd";
+        List<PersonInfoDTO> result = List.of(new PersonInfoDTO(firstName, lastName, "email",
                 19, new ArrayList<>(), new ArrayList<>()));
-        when(personInfoService.getAllPersonsByName("Firstname", "Lastname")).thenReturn(result);
+        when(personInfoService.getAllPersonsByName(firstName, lastName)).thenReturn(result);
 
         mockMvc.perform(get("/personInfo")
-                        .param("firstName", "Firstname")
-                        .param("lastName", "Lastname"))
+                        .param("firstName", firstName)
+                        .param("lastName", lastName))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(personInfoService).getAllPersonsByName("Firstname", "Lastname");
+        verify(personInfoService).getAllPersonsByName(firstName, lastName);
     }
 
     @Test

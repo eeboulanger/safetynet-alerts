@@ -2,6 +2,7 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.repository.IFireStationRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,55 +21,55 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FireStationServiceTest {
-
     @Mock
     private IFireStationRepository repository;
-
     @InjectMocks
     private FireStationService service;
 
     private final FireStation station = new FireStation();
-
     private final Map<String, String> stationId = new HashMap<>();
+    private List<FireStation> fireStationList;
+
+    @BeforeEach
+    public void setUp() {
+        fireStationList = List.of(new FireStation(
+                "Holmart street",
+                11
+        ));
+    }
 
     @Test
     public void findAllTest() {
-        List<FireStation> list = List.of(new FireStation(
-                "address",
-                1
-        ));
-        when(repository.findAll()).thenReturn(Optional.of(list));
+        when(repository.findAll()).thenReturn(Optional.of(fireStationList));
 
         Optional<List<FireStation>> stations = service.findAll();
 
         assertTrue(stations.isPresent());
-        assertEquals(1, stations.get().size());
+        assertEquals(fireStationList, stations.get());
     }
 
     @Test
     public void findByAddressTest() {
-        FireStation fireStation = new FireStation("address", 1);
+        String address = fireStationList.get(0).getAddress();
+        when(repository.findStationByAddress(address)).thenReturn(Optional.of(fireStationList.get(0)));
 
-        when(repository.findStationByAddress("address")).thenReturn(Optional.of(fireStation));
+        Optional<FireStation> result = service.findStationByAddress(address);
 
-        Optional<FireStation> result = service.findStationByAddress("address");
-
-        verify(repository).findStationByAddress("address");
+        verify(repository).findStationByAddress(address);
         assertTrue(result.isPresent());
-        assertEquals("address", result.get().getAddress());
+        assertEquals(address, result.get().getAddress());
     }
 
     @Test
     public void findByNumberTest() {
-        List<FireStation> list = List.of(new FireStation("address", 1));
+        int station = fireStationList.get(0).getStation();
+        when(repository.findByStationNumber(station)).thenReturn(Optional.of(fireStationList));
 
-        when(repository.findByStationNumber(1)).thenReturn(Optional.of(list));
+        Optional<List<FireStation>> result = service.findByStationNumber(station);
 
-        Optional<List<FireStation>> result = service.findByStationNumber(1);
-
-        verify(repository).findByStationNumber(1);
+        verify(repository).findByStationNumber(station);
         assertTrue(result.isPresent());
-        assertEquals(1, result.get().size());
+        assertTrue(result.get().contains(fireStationList.get(0)));
     }
 
     @Test

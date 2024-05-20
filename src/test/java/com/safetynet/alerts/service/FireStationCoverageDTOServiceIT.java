@@ -1,5 +1,6 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.config.DataInitializer;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
@@ -18,7 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FireStationCoverageDTOServiceIT {
 
     @Autowired
-    FireStationCoverageService service;
+    private FireStationCoverageService service;
+    @Autowired
+    private DataInitializer dataInitializer;
+
+    @BeforeEach
+    public void setUp() {
+        dataInitializer.run();
+    }
 
     @Nested
     class ListTests {

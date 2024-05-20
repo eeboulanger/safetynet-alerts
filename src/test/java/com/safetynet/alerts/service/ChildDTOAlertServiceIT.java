@@ -1,7 +1,9 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.config.DataInitializer;
 import com.safetynet.alerts.dto.ChildDTO;
 import com.safetynet.alerts.dto.PersonContactInfo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ChildDTOAlertServiceIT {
-
     @Autowired
-    ChildAlertService service;
+    private ChildAlertService service;
+    @Autowired
+    private DataInitializer dataInitializer;
+
+    @BeforeEach
+    public void setUp() {
+        dataInitializer.run();
+    }
 
     @Test
     @DisplayName("Given there are children when entering address, then return list")

@@ -1,7 +1,9 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.config.DataInitializer;
 import com.safetynet.alerts.model.Person;
-import org.junit.jupiter.api.AfterEach;
+import com.safetynet.alerts.repository.PersonRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,81 +18,51 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class PersonServiceIT {
-
     @Autowired
     private PersonService personService;
-    private Person person = new Person(
-            "Person test",
-            "Smith",
-            "Address",
-            "City",
-            12345,
-            "1111",
-            "Email");
+    @Autowired
+    private PersonRepository repository;
+    @Autowired
+    private DataInitializer dataInitializer;
+    private Person person;
 
-    @AfterEach
-    public void reset() {
-        Map<String, String> personId = Map.of(
-                "firstName", person.getFirstName(),
-                "lastName", person.getLastName()
-        );
+    @BeforeEach
+    public void setUp() {
+        //Initialize data for testing
+        dataInitializer.run();
 
-        personService.delete(personId);
+        person = repository.findAll().isPresent() ? repository.findAll().get().get(0) : new Person();
     }
 
     @Test
-    @DisplayName("Given there is no person with the name, then write new person to file")
-    public void createPerson_whenNewPerson_thenWritePersonToFile() {
-
-        boolean result = personService.create(person);
+    @DisplayName("Given there is no person with the name, then save new person")
+    public void createPerson_whenNewPerson_thenSavePerson() {
+        Person newPerson = new Person(
+                "Emma",
+                "Smith",
+                "address",
+                "city",
+                123,
+                "phone",
+                "email"
+        );
+        boolean result = personService.create(newPerson);
 
         assertTrue(result);
     }
 
     @Test
-    @DisplayName("Given there is a person with the name, then update person in existing file")
-    public void updatePerson_whenPersonExists_thenUpdatePersonToFile() {
-        personService.create(person);
-
-        person = new Person(
-                "Person test",
-                "Smith",
-                "New address",
-                "New city",
-                12345,
-                "1111",
-                "New email"
-        );
-
+    @DisplayName("Given there is a person with the name, then update person")
+    public void updatePerson_whenPersonExists_thenUpdatePerson() {
+        person.setCity("Denver");
         boolean isUpdated = personService.update(person);
 
-        Optional<List<Person>> optional = personService.findByName(person.getFirstName(), person.getLastName());
-        Person result = new Person();
-        if (optional.isPresent()) {
-            result = optional.get().get(0);
-        }
-
         assertTrue(isUpdated);
-        assertEquals("New address", result.getAddress());
-        assertEquals("New city", result.getCity());
-        assertEquals("New email", result.getEmail());
     }
 
     @Test
-    @DisplayName("Given there is a person with the name, then delete the person from existing file")
-    public void deletePerson_whenPersonExists_thenDeletePersonFromFile() {
-        person = new Person(
-                "Delete person test",
-                "Smith",
-                "Address",
-                "City",
-                12345,
-                "1111",
-                "Email"
-        );
-
-        personService.create(person);
-
+    @DisplayName("Given there is a person with the name, then delete the person")
+    public void deletePerson_whenPersonExists_thenDeletePerson() {
         Map<String, String> personId = Map.of(
                 "firstName", person.getFirstName(),
                 "lastName", person.getLastName()
@@ -99,5 +71,25 @@ public class PersonServiceIT {
         boolean result = personService.delete(personId);
 
         assertTrue(result);
+    }
+
+    @Test
+    public void findAllTest() {
+        Optional<List<Person>> result = personService.findAll();
+        assertTrue(result.isPresent());
+        assertEquals(23, result.get().size());
+    }
+
+    @Test
+    public void findByName() {
+        Optional<List<Person>> result = personService.findByName(person.getFirstName(), person.getLastName());
+        assertTrue(result.isPresent());
+        assertTrue(result.get().contains(person));
+    }
+    @Test
+    public void findByAddress(){
+        Optional<List<Person>> result = personService.findByAddress(person.getAddress());
+        assertTrue(result.isPresent());
+        assertTrue(result.get().contains(person));
     }
 }

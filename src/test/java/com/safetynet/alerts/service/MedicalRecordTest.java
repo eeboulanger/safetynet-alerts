@@ -2,6 +2,7 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.IMedicalRecordRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,43 +23,47 @@ import static org.mockito.Mockito.when;
 public class MedicalRecordTest {
     @Mock
     private IMedicalRecordRepository repository;
-
     @InjectMocks
     private MedicalRecordService service;
 
     private final MedicalRecord record = new MedicalRecord();
-
     private final Map<String, String> recordId = new HashMap<>();
+    private List<MedicalRecord> medicalRecordList;
+
+    @BeforeEach
+    public void setUp() {
+        medicalRecordList = List.of(new MedicalRecord(
+                "Johanna",
+                "Evergreen",
+                "01/01/1970",
+                List.of("30mg:Holdex"),
+                List.of("cats", "pollen")
+        ));
+    }
 
     @Test
     public void findAllTest() {
-        List<MedicalRecord> list = List.of(new MedicalRecord(
-                "Firstname",
-                "Lastname",
-                "birthdate",
-                null,
-                null
-        ));
-        when(repository.findAll()).thenReturn(Optional.of(list));
+        when(repository.findAll()).thenReturn(Optional.of(medicalRecordList));
 
         Optional<List<MedicalRecord>> records = service.findAll();
 
         assertTrue(records.isPresent());
-        assertEquals(1, records.get().size());
+        assertTrue(records.get().containsAll(medicalRecordList));
     }
 
     @Test
     public void findByNameTest() {
-        MedicalRecord person = new MedicalRecord();
-        person.setFirstName("Firstname");
-        person.setLastName("Lastname");
-        when(repository.findByName("Firstname", "Lastname")).thenReturn(Optional.of(person));
+        String firstName = medicalRecordList.get(0).getFirstName();
+        String lastName = medicalRecordList.get(0).getLastName();
+        when(repository.findByName(firstName, lastName))
+                .thenReturn(Optional.of(medicalRecordList.get(0)));
 
-        Optional<MedicalRecord> result = service.findByName("Firstname", "Lastname");
+        Optional<MedicalRecord> result = service.findByName(firstName, lastName);
 
-        verify(repository).findByName("Firstname", "Lastname");
+        verify(repository).findByName(firstName, lastName);
         assertTrue(result.isPresent());
-        assertEquals("Firstname", result.get().getFirstName());
+        assertEquals(firstName, result.get().getFirstName());
+        assertEquals(lastName, result.get().getLastName());
     }
 
     @Test
@@ -82,7 +87,7 @@ public class MedicalRecordTest {
     }
 
     @Test
-    public void deleterecordTest() {
+    public void deleteRecordTest() {
         when(repository.delete(recordId)).thenReturn(true);
 
         boolean result = service.delete(recordId);

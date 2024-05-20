@@ -11,6 +11,7 @@ import java.util.Optional;
  */
 
 public interface ICrudRepository<T> {
+    boolean saveAll(List<T> list);
 
     boolean create(T entity);
 

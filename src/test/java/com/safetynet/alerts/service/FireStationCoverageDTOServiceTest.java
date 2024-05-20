@@ -5,7 +5,6 @@ import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.dto.FireStationCoverageDTO;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
-import com.safetynet.alerts.repository.FireStationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,5 +1,7 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.config.DataInitializer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,13 @@ public class EmailServiceIT {
 
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private DataInitializer dataInitializer;
+
+    @BeforeEach
+    public void setUp() {
+        dataInitializer.run();
+    }
 
     @Test
     @DisplayName("Given there are persons when entering city then return a list of emails")

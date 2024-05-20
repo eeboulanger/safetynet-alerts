@@ -1,9 +1,8 @@
 package com.safetynet.alerts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.alerts.DataPrepareService;
+import com.safetynet.alerts.config.DataInitializer;
 import com.safetynet.alerts.model.MedicalRecord;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,28 +13,33 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class MedicalControllerIT {
+public class MedicalRecordControllerIT {
     private final ObjectMapper mapper = new ObjectMapper();
-    private DataPrepareService dataPrepareService;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private DataInitializer dataInitializer;
+    private MedicalRecord record;
 
     @BeforeEach
     public void setUp() {
-        dataPrepareService = new DataPrepareService();
-    }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        dataPrepareService.resetData();
+        dataInitializer.run();
+
+        record = new MedicalRecord(
+                "Eric",
+                "Cadigan",
+                "08/06/1945",
+                List.of(
+                        "tradoxidine:400mg"), new ArrayList<>());
     }
 
     @Test
@@ -55,7 +59,6 @@ public class MedicalControllerIT {
     @Test
     @DisplayName("Given there is already a medical record with the given name, then create should fail")
     public void createMedicalRecordFailsTest() throws Exception {
-        MedicalRecord record = dataPrepareService.getMedicalRecord(0);
         String requestBody = mapper.writeValueAsString(record);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/medicalRecord")
@@ -67,8 +70,6 @@ public class MedicalControllerIT {
 
     @Test
     public void updateMedicalRecordTest() throws Exception {
-        MedicalRecord record = dataPrepareService.getMedicalRecord(1);
-        record.setBirthdate("new birthdate");
         String requestBody = mapper.writeValueAsString(record);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/medicalRecord")
@@ -99,7 +100,6 @@ public class MedicalControllerIT {
 
     @Test
     public void deleteMedicalRecordTest() throws Exception {
-        MedicalRecord record = dataPrepareService.getMedicalRecord(1);
         String requestBody = mapper.writeValueAsString(record);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/medicalRecord")

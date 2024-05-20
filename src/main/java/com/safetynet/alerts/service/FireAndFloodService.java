@@ -37,15 +37,13 @@ public class FireAndFloodService implements IFireAndFloodService {
 
     @Override
     public List<FloodDTO> findAllHouseHoldsCoveredByStations(List<Integer> fireStationNumbers) {
-
         List<FloodDTO> floodDTOList = new ArrayList<>();
 
         for (int stationNumber : fireStationNumbers) {
             Optional<List<FireStation>> optional = fireStationService.findByStationNumber(stationNumber);
 
-            //A fire station can have multiple addresses so get all of them
+            //A fire station can cover multiple addresses so get all of them
             if (optional.isPresent()) {
-
                 Set<String> addresses = optional.get().stream()
                         .map(FireStation::getAddress)
                         .collect(Collectors.toSet());

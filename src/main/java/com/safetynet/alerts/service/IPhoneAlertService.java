@@ -3,7 +3,7 @@ package com.safetynet.alerts.service;
 import java.util.Set;
 
 /**
- * Find phone numbers for homes covered by station
+ * Any class that handles finding phone numbers for homes covered by station
  */
 public interface IPhoneAlertService {
 

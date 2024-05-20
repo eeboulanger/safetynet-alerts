@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = MedicalRecordController.class)
-public class MedicalControllerTest {
+public class MedicalRecordControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -90,8 +90,8 @@ public class MedicalControllerTest {
     @Test
     public void deleteTest() throws Exception {
         Map<String, String> map = Map.of(
-                "firstname", record.getFirstName(),
-                "lastname", String.valueOf(record.getLastName()
+                "firstName", record.getFirstName(),
+                "lastName", String.valueOf(record.getLastName()
                 ));
         when(service.delete(map)).thenReturn(true);
 
@@ -107,9 +107,9 @@ public class MedicalControllerTest {
     @Test
     public void deleteFailsTest() throws Exception {
         Map<String, String> map = Map.of(
-                "firstname", record.getFirstName(),
-                "lastname", String.valueOf(record.getLastName()
-                ));
+                "firstName", record.getFirstName(),
+                "lastName", record.getLastName()
+                );
         when(service.delete(map)).thenReturn(false);
 
         mockMvc.perform(delete("/medicalRecord")

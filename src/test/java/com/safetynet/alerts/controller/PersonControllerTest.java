@@ -98,8 +98,7 @@ public class PersonControllerTest {
         when(service.delete(map)).thenReturn(true);
 
         mockMvc.perform(delete("/person")
-                        .param("firstName", person.getFirstName())
-                        .param("lastName", person.getLastName())
+                        .content(mapper.writeValueAsString(person))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("Person has been successfully deleted"));
@@ -116,8 +115,7 @@ public class PersonControllerTest {
         when(service.delete(map)).thenReturn(false);
 
         mockMvc.perform(delete("/person")
-                        .param("firstName", person.getFirstName())
-                        .param("lastName", person.getLastName())
+                        .content(mapper.writeValueAsString(person))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("Deleting person has failed"));

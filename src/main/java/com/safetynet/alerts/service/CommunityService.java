@@ -12,18 +12,16 @@ import static com.safetynet.alerts.util.AgeCalculator.calculateAge;
 
 @Service
 public class CommunityService implements ICommunityService {
-
     @Autowired
     private IPersonService personService;
     @Autowired
     private IMedicalRecordService medicalRecordService;
 
-
     /**
      * Finds all persons with the same first and last name.
      *
-     * @param firstName
-     * @param lastName
+     * @param firstName used for search
+     * @param lastName used for search
      * @return person info : name, address, age, mail, medications and allergies
      */
     public List<PersonInfoDTO> getAllPersonsByName(String firstName, String lastName) {
@@ -48,7 +46,6 @@ public class CommunityService implements ICommunityService {
                 personInfoDTO.add(dto);
             }
         }
-
         return personInfoDTO;
     }
 }
